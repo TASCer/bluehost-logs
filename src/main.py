@@ -1,6 +1,5 @@
 import my_secrets
 import re
-import string
 
 new_line = '\n'
 
@@ -9,7 +8,7 @@ new_line = '\n'
 def process_logs():
 	# remove = string.punctuation
 	log_entries = []
-	with open('../test/hoaOct-2023') as logs:
+	with open('../test/tascsolutions_sslOct-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
@@ -57,9 +56,9 @@ def process_logs():
 
 			agent_referer_ip = agent_list[-1].strip()
 			agent_referer_url = agent_list[-2]
-			print(f"ip: {ip}{new_line}country: {country}{new_line}date: {date}{new_line}time: {time}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}"
-				  f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}{new_line}agent_name: {agent_name}"
-				  f"{new_line}agent_referer_ip: {agent_referer_ip}{new_line}agent_referer_url: {agent_referer_url}{new_line}")
+			# print(f"ip: {ip}{new_line}country: {country}{new_line}date: {date}{new_line}time: {time}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}"
+			# 	  f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}{new_line}agent_name: {agent_name}"
+			# 	  f"{new_line}agent_referer_ip: {agent_referer_ip}{new_line}agent_referer_url: {agent_referer_url}{new_line}")
 				  # f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}")
 			# print(f"{ip}\t\t {agent_name}")
 			print("-------------------------------------------------------")
