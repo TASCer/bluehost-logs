@@ -1,5 +1,26 @@
+import datetime as dt
+import logging
 import my_secrets
 import re
+import get_country_name
+
+from logging import Logger, Formatter
+
+now: dt = dt.date.today()
+todays_date: str = now.strftime('%D').replace('/', '-')
+
+root_logger: Logger = logging.getLogger()
+root_logger.setLevel(logging.INFO)
+
+fh = logging.FileHandler(f'../log_{todays_date}.log')
+fh.setLevel(logging.DEBUG)
+
+formatter: Formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+
+root_logger.addHandler(fh)
+
+
 
 new_line = '\n'
 
@@ -8,7 +29,7 @@ new_line = '\n'
 def process_logs():
 	# remove = string.punctuation
 	log_entries = []
-	with open('../test/tascsolutions_sslOct-2023') as logs:
+	with open('../test/hoaOct-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
@@ -61,7 +82,7 @@ def process_logs():
 			# 	  f"{new_line}agent_referer_ip: {agent_referer_ip}{new_line}agent_referer_url: {agent_referer_url}{new_line}")
 				  # f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}")
 			# print(f"{ip}\t\t {agent_name}")
-			print("-------------------------------------------------------")
+			# print("-------------------------------------------------------")
 			log_entries.append(ip)
 	# with open engine as conn, conn.begin
 
@@ -74,4 +95,5 @@ if __name__ == '__main__':
 	print(f"HITS: {len(processed_logs)}")
 	unique_processed_logs: set = set(processed_logs)
 	print(f"Unique HITS: {len(unique_processed_logs)}")
-	# update_country_name(entries)
+	get_country_name.find(unique_processed_logs)
+	# update_country_name.update(unique_processed_logs)
