@@ -1,7 +1,7 @@
 import datetime as dt
 import ipwhois
 import logging
-import my_secrets
+from src import my_secrets
 
 from datetime import datetime
 from ipwhois.utils import get_countries
