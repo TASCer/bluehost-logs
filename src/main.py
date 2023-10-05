@@ -1,5 +1,6 @@
 # TODO hoa seems to work, tascssolutions not so much
 import datetime as dt
+import db_checks
 import logging
 import my_secrets
 import re
@@ -81,6 +82,17 @@ def process_logs():
 
 if __name__ == '__main__':
 	logger: Logger = logging.getLogger(__name__)
+	logger.info("Checking RDBMS Availability")
+	have_database: bool = db_checks.schema()
+	have_tables: bool = db_checks.tables()
+	if have_database and have_tables:
+		logger.info("RDBMS is available and ready")
+		# latest_parcel_data = start_insights()
+		# update_parcel_data.update(latest_parcel_data)
+		# publish_rental_insights.web_publish()
+		# parcel_changes = get_new_insights()
+	else:
+		logger.error("RDMS IS NOT OPERATIONAL")
 	processed_logs: list = process_logs()
 	logger.info(f"HITS: {len(processed_logs)}")
 	unique_processed_logs: set = set(processed_logs)
