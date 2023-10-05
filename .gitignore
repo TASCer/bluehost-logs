@@ -1,5 +1,5 @@
 /input/*
 /misc/bhlogs.pbix
-/my_secrets.py
+/src/my_secrets.py
 /test/
 /.idea/*
