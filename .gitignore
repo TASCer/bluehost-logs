@@ -3,3 +3,4 @@
 /src/my_secrets.py
 /test/
 /.idea/*
+/*.log
