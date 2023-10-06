@@ -29,44 +29,7 @@ def update(ips: list) -> object:
         exit()
 
     with engine.connect() as conn, conn.begin():
-        country_found = []
-        country_not_found = []
         for ip in ips:
-            # get country name from fwlogs.lookup to populate bluehost_logs.lookup
-            try:
-                sel_sql: str = f'''SELECT country from lookup WHERE source = '{ip}' ;'''
-                lookups: CursorResult = conn.execute(text(sel_sql))
-                res = [i[0] for i in lookups]
-            except exc.SQLAlchemyError as e:
-                logger.warning(str(e))
-                lookups = None
-                exit()
-            if res:
-                # insert ip, country into bluehost_lookup table
-                country_name = res[0]
-                logger.info(f"**{country_name} @ {ip} was found in SOHO firewall logs**")
-                country_found.append((ip, country_name))
-
-            # else:
-            #     # print("COUNTRY NOT FOUND")
-            #     country_name = 'NF'
-            #     country_not_found.append((ip, country_name))
-
-    print(len(country_found), country_found)
-    print(len(country_not_found), country_not_found)
-
-    try:
-        engine: Engine = create_engine(f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
-
-    except exc.SQLAlchemyError as e:
-        logger.critical(str(e))
-        engine = None
-        exit()
-
-    with engine.connect() as conn, conn.begin():
-
-        for ip, country in country_not_found:
-            print(ip, country)
             try:
                 obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
                 result: dict = obj.lookup_rdap()
@@ -93,7 +56,7 @@ def update(ips: list) -> object:
                 error: str = str(e).split('http:')[0]
                 logger.error(f"{error} {ip}")
 
-            conn.execute(text(f'''INSERT INTO `bluehost-logs`.`lookup` VALUES('{ip}', '{country}');'''))
+            conn.execute(text(f'''INSERT IGNORE INTO `bluehost-logs`.`lookup` VALUES('{ip}', '{country_name}');'''))
 
         #         conn.execute(f'''update lookup SET country = '{error}' WHERE SOURCE = '{ip}';''')
         #         continue
