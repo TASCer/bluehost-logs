@@ -1,6 +1,7 @@
 # TODO hoa seems to work, tascssolutions not so much
 import datetime as dt
 import db_checks
+import get_country_name
 import logging
 import my_secrets
 import re
@@ -33,8 +34,8 @@ def process_logs():
 		for log in logs:
 			basic = log.split('" "')[0]
 			basic_info = basic.split("- - ")[1]
-			ts = basic_info.split(']')[0][1:]
-			date, time = ts.split(':', 1)
+			timestamp = basic_info.split(']')[0][1:]
+
 			ip = basic.split("- - ")[0]
 			ip = ip.rstrip()
 
@@ -45,7 +46,7 @@ def process_logs():
 
 			if len(client) == 0:
 				client_os, client_format  = 2*('', )
-				print(f"{ip} has issue with client split, alter re to resolve")
+				# print(f"{ip} has issue with client split, alter re to resolve")
 			elif len(client) == 1:
 				client_format = ''
 				client_os = client[0]
@@ -76,7 +77,7 @@ def process_logs():
 			# print(f"{ip}\t\t {agent_name}")
 			# print("-------------------------------------------------------")
 			sources.append(ip)
-			log_entries.append((ip, date, time))
+			log_entries.append((ip, timestamp))
 	return sources, log_entries
 
 
@@ -85,18 +86,18 @@ if __name__ == '__main__':
 	logger.info("Checking RDBMS Availability")
 	have_database: bool = db_checks.schema()
 	have_tables: bool = db_checks.tables()
-	# if have_database and have_tables:
-	# 	logger.info("RDBMS is available and ready")
-		# latest_parcel_data = start_insights()
-		# update_parcel_data.update(latest_parcel_data)
-		# publish_rental_insights.web_publish()
-		# parcel_changes = get_new_insights()
-	# else:
-	# 	logger.error("RDMS IS NOT OPERATIONAL")
+
+	if have_database and have_tables:
+		logger.info("RDBMS is available and ready")
+	else:
+		logger.error("RDMS IS NOT OPERATIONAL")
+
 	ips, processed_logs = process_logs()
-	update_activity_table.update(processed_logs)
 	logger.info(f"HITS: {len(processed_logs)}")
-	unique_sources: set = set(processed_logs)
+	unique_sources: set = set(ips)
 	logger.info(f"Unique HITS: {len(unique_sources)}")
-	# get_country_name.find(unique_sources)
-	update_lookup_table.update(unique_sources)
+	get_country_name.find(unique_sources)
+	# update_lookup_table.update(unique_sources)
+	# update_activity_table.update(processed_logs)
+
+
