@@ -20,6 +20,9 @@ COUNTRIES = get_countries()
 def find(ips: list) -> object:
     """Updates lookup table with unique ips from ALPHA-2 to full country name"""
     logger: Logger = logging.getLogger(__name__)
+    country_found = []
+    country_not_found = []
+
     try:
         engine: Engine = create_engine(f"mysql+pymysql://{my_secrets.fwlogs_dbuser}:{my_secrets.fwlogs_dbpass}@{my_secrets.fwlogs_dbhost}/{my_secrets.fwlogs_dbname}")
 
@@ -29,8 +32,6 @@ def find(ips: list) -> object:
         exit()
 
     with engine.connect() as conn, conn.begin():
-        country_found = []
-        country_not_found = []
         for ip in ips:
             # get country name from fwlogs.lookup to populate bluehost_logs.lookup
             try:
@@ -50,9 +51,25 @@ def find(ips: list) -> object:
                 # print("COUNTRY NOT FOUND")
                 country_name = 'NF'
                 country_not_found.append((ip, country_name))
-    print(len(country_found), country_found)
-    print(len(country_not_found), country_not_found)
-                #     use iphois to update lookup with country name
+        print(len(country_found), country_found)
+        print(len(country_not_found), country_not_found)
+
+    # NEW ENGINE TO OPS TO ADD TO LOOKUP
+    try:
+        engine: Engine = create_engine(
+            f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
+
+    except exc.SQLAlchemyError as e:
+        logger.critical(str(e))
+        engine = None
+        exit()
+
+    with engine.connect() as conn, conn.begin():
+        for s in country_found:
+            ip = s[0]
+            country_name = s[1]
+            conn.execute(text(f'''INSERT INTO `bluehost-logs`.`lookup` (`SOURCE`, `COUNTRY`) VALUES ('{ip}', '{country_name}');'''))
+        #     use iphois to update lookup with country name
                 # try:
                 #     obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
                 #     result: dict = obj.lookup_rdap()
