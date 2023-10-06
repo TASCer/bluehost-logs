@@ -93,9 +93,9 @@ if __name__ == '__main__':
 		logger.error("RDMS IS NOT OPERATIONAL")
 
 	ips, processed_logs = process_logs()
-	logger.info(f"HITS: {len(processed_logs)}")
+	# logger.info(f"HITS: {len(processed_logs)}")
 	unique_sources: set = set(ips)
-	logger.info(f"Unique HITS: {len(unique_sources)}")
+	logger.info(f"HITS: {len(processed_logs)} Unique HITS: {len(unique_sources)}")
 	country_not_found: list = get_country_name.find(unique_sources)
 	update_lookup_table.update(country_not_found)
 	# update_activity_table.update(processed_logs)
