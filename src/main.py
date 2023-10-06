@@ -96,8 +96,8 @@ if __name__ == '__main__':
 	logger.info(f"HITS: {len(processed_logs)}")
 	unique_sources: set = set(ips)
 	logger.info(f"Unique HITS: {len(unique_sources)}")
-	get_country_name.find(unique_sources)
-	# update_lookup_table.update(unique_sources)
+	country_not_found: list = get_country_name.find(unique_sources)
+	update_lookup_table.update(country_not_found)
 	# update_activity_table.update(processed_logs)
 
 
