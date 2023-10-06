@@ -1,9 +1,11 @@
 import datetime as dt
 import ipwhois
 import logging
-from src import my_secrets
+import time
 
+from dateutil.parser import *
 from datetime import datetime
+from src import my_secrets
 from ipwhois.utils import get_countries
 from ipwhois import IPWhois
 from logging import Logger
@@ -28,9 +30,18 @@ def update(log_entries: list) -> object:
         engine = None
         exit()
 
-    # with engine.connect() as conn, conn.begin():
-    # print(log_entries)
-    for ip, date, time in log_entries:
-        print(ip, date, time)
-
+    with engine.connect() as conn, conn.begin():
+        for ip, ts in log_entries:
+            ts = ts.replace(':', ' ', 1)
+            date, time, tz = ts.split()
+            # print("DATE: ", date, len(date), type(date))
+            # print("TIME: ", time, tz)
+            date_obj = parse(date)
+            print("DATE: ", date_obj)
+            time_obj = parse(time)#datetime.strptime(time, '%HH::%mm::%S')
+            print("TIME: ", time_obj)
+            # date = datetime.strptime(date, "")
+            # ts = parse(ts)
+            # print(ip, ts, type(ts))
+            conn.execute(text(f'''INSERT INTO `bluehost-logs`.`activity` VALUES(id, '{ip}', '{date_obj}', '{time_obj}');'''))
 
