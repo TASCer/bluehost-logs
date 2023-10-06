@@ -60,12 +60,13 @@ def tables():
 
 	if not activity_tbl:
 		try:
-			parcels = Table(
+			activity = Table(
 				ACTIVITY, meta,
 				Column('id', types.INT, autoincrement=True, primary_key=True),
 				Column('SOURCE', types.VARCHAR(15)),
-				Column('DATE', types.VARCHAR(100)),
-				Column('TIME', types.INT)
+				# Column('ts', types.TIMESTAMP)
+				Column('DATE', types.DATE),
+				Column('TIME', types.TIME)
 				# Column('LONG', types.INT)
 			)
 		except (exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:

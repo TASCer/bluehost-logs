@@ -30,6 +30,7 @@ def find(ips: list) -> object:
 
     with engine.connect() as conn, conn.begin():
         country_found = []
+        country_not_found = []
         for ip in ips:
             # get country name from fwlogs.lookup to populate bluehost_logs.lookup
             try:
@@ -46,9 +47,11 @@ def find(ips: list) -> object:
                 print(country_name)
                 country_found.append((ip, country_name))
             else:
-                print("COUNTRY NOT FOUND")
-
-    print(country_found)
+                # print("COUNTRY NOT FOUND")
+                country_name = 'NF'
+                country_not_found.append((ip, country_name))
+    print(len(country_found), country_found)
+    print(len(country_not_found), country_not_found)
                 #     use iphois to update lookup with country name
                 # try:
                 #     obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
