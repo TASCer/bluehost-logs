@@ -4,7 +4,8 @@ import db_checks
 import logging
 import my_secrets
 import re
-import get_country_name
+import update_activity_table
+import update_lookup_table
 
 from logging import Logger, Formatter
 
@@ -22,13 +23,12 @@ fh.setFormatter(formatter)
 
 root_logger.addHandler(fh)
 
-
-
 new_line = '\n'
 
 
 def process_logs():
-	log_entries = []
+	log_entries: list = []
+	sources: list = []
 	with open('../test/tascsolutions_sslOct-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
@@ -75,9 +75,9 @@ def process_logs():
 			# f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}")
 			# print(f"{ip}\t\t {agent_name}")
 			# print("-------------------------------------------------------")
-			log_entries.append(ip)
-
-	return log_entries
+			sources.append(ip)
+			log_entries.append((ip, date, time))
+	return sources, log_entries
 
 
 if __name__ == '__main__':
@@ -85,17 +85,18 @@ if __name__ == '__main__':
 	logger.info("Checking RDBMS Availability")
 	have_database: bool = db_checks.schema()
 	have_tables: bool = db_checks.tables()
-	if have_database and have_tables:
-		logger.info("RDBMS is available and ready")
+	# if have_database and have_tables:
+	# 	logger.info("RDBMS is available and ready")
 		# latest_parcel_data = start_insights()
 		# update_parcel_data.update(latest_parcel_data)
 		# publish_rental_insights.web_publish()
 		# parcel_changes = get_new_insights()
-	else:
-		logger.error("RDMS IS NOT OPERATIONAL")
-	processed_logs: list = process_logs()
+	# else:
+	# 	logger.error("RDMS IS NOT OPERATIONAL")
+	ips, processed_logs = process_logs()
+	update_activity_table.update(processed_logs)
 	logger.info(f"HITS: {len(processed_logs)}")
-	unique_processed_logs: set = set(processed_logs)
-	logger.info(f"Unique HITS: {len(unique_processed_logs)}")
-	get_country_name.find(unique_processed_logs)
-	# update_country_name.update(unique_processed_logs)
+	unique_sources: set = set(processed_logs)
+	logger.info(f"Unique HITS: {len(unique_sources)}")
+	# get_country_name.find(unique_sources)
+	update_lookup_table.update(unique_sources)
