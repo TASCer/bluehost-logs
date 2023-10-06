@@ -1,3 +1,4 @@
+python-dateutil==2.8.2
 ipwhois==1.2.0
 PyMySQL==1.1.0
 sortedcontainers @ file:///home/conda/feedstock_root/build_artifacts/sortedcontainers_1621217038088/work
