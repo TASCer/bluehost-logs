@@ -63,7 +63,7 @@ def tables():
 			parcels = Table(
 				ACTIVITY, meta,
 				Column('id', types.INT, autoincrement=True, primary_key=True),
-				Column('IP', types.VARCHAR(12)),
+				Column('SOURCE', types.VARCHAR(15)),
 				Column('DATE', types.VARCHAR(100)),
 				Column('TIME', types.INT)
 				# Column('LONG', types.INT)
@@ -72,6 +72,14 @@ def tables():
 			logger.error(str(e))
 			return False
 
+	if not lookup_tbl:
+		# engine = create_engine(f'mysql+pymysql://{DB_USER}:{DB_PW}@{DB_HOSTNAME}/{DB_NAME}')
+
+		communities = Table(
+			LOOKUP, meta,
+			Column('SOURCE', types.VARCHAR(15), primary_key=True),
+			Column('COUNTRY', types.VARCHAR(120))
+		)
 	# 	try:
 	# 		parcel_constants = pd.read_csv(f"../input/{PARCELS}.csv", index_col=0, header=0, skiprows=None)
 	# 	except IOError as e:
@@ -94,14 +102,7 @@ def tables():
 	# 			logger.critical(str(e))
 	# 			return False
 	#
-	if not lookup_tbl:
-		# engine = create_engine(f'mysql+pymysql://{DB_USER}:{DB_PW}@{DB_HOSTNAME}/{DB_NAME}')
 
-		communities = Table(
-			LOOKUP, meta,
-			Column('IP', types.VARCHAR(12), primary_key=True),
-			Column('COUNTRY', types.VARCHAR(120))
-		)
 		# try:
 		# 	with engine.connect() as conn, conn.begin():
 		# 		q_community_parcel_totals = conn.execute(text(
