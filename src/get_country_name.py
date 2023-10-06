@@ -48,8 +48,7 @@ def find(ips: list) -> object:
                 country_found.append((ip, country_name))
             else:
                 country_not_found.append((ip))
-        print(len(country_found), country_found)
-        print(len(country_not_found), country_not_found)
+        logger.info(f"Country Found: {len(country_found)} Not Found: {len(country_not_found)}")
 
     # NEW ENGINE TO OPS TO ADD TO LOOKUP
     try:
