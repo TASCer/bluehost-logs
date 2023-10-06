@@ -21,42 +21,46 @@ def update(ips: list) -> object:
     """Updates lookup table with unique ips from ALPHA-2 to full country name"""
     logger: Logger = logging.getLogger(__name__)
     try:
-        engine: Engine = create_engine(f"mysql+pymysql://{my_secrets.fwlogs_dbuser}:{my_secrets.fwlogs_dbpass}@{my_secrets.fwlogs_dbhost}/{my_secrets.fwlogs_dbname}")
+        engine: Engine = create_engine(f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
 
     except exc.SQLAlchemyError as e:
         logger.critical(str(e))
         engine = None
         exit()
-
+    # ISSUE CHECK IF ALREADY FOUND COUNTRY NAME
     with engine.connect() as conn, conn.begin():
         for ip in ips:
-            try:
-                obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
-                result: dict = obj.lookup_rdap()
-                asn_alpha2: str = result['asn_country_code']
+            res = conn.execute(text('''select country from lookup where source = '{ip}';'''))
 
-                if asn_alpha2 is None or asn_alpha2 == '':
-                    logger.warning(f"{ip} had no alpha2 code, setting country name to 'unknown'")
-                    asn_alpha2: str = 'unknown'
-                    conn.execute(f'''update lookup SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';''')
-                    continue
-
-                elif asn_alpha2.islower():
-                    asn_alpha2: str = asn_alpha2.upper()
-                    logger.warning(f'RDAP responded with lowercase country for {ip}, should be upper')
-
-                else:
-                    country_name: Optional[Any] = COUNTRIES.get(asn_alpha2)
-
-            except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
-                    ipwhois.ASNParseError, ipwhois.ASNOriginLookupError, ipwhois.ASNRegistryError,
-                    ipwhois.HostLookupError, ipwhois.HTTPLookupError) as e:
-
-                result = None
-                error: str = str(e).split('http:')[0]
-                logger.error(f"{error} {ip}")
-
-            conn.execute(text(f'''INSERT IGNORE INTO `bluehost-logs`.`lookup` VALUES('{ip}', '{country_name}');'''))
+            c = res.first()
+            print(len(res))
+            # try:
+            #     obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
+            #     result: dict = obj.lookup_rdap()
+            #     asn_alpha2: str = result['asn_country_code']
+            #
+            #     if asn_alpha2 is None or asn_alpha2 == '':
+            #         logger.warning(f"{ip} had no alpha2 code, setting country name to 'unknown'")
+            #         asn_alpha2: str = 'unknown'
+            #         conn.execute(f'''update lookup SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';''')
+            #         continue
+            #
+            #     elif asn_alpha2.islower():
+            #         asn_alpha2: str = asn_alpha2.upper()
+            #         logger.warning(f'RDAP responded with lowercase country for {ip}, should be upper')
+            #
+            #     else:
+            #         country_name: Optional[Any] = COUNTRIES.get(asn_alpha2)
+            #
+            # except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
+            #         ipwhois.ASNParseError, ipwhois.ASNOriginLookupError, ipwhois.ASNRegistryError,
+            #         ipwhois.HostLookupError, ipwhois.HTTPLookupError) as e:
+            #
+            #     result = None
+            #     error: str = str(e).split('http:')[0]
+            #     logger.error(f"{error} {ip}")
+            #
+            # conn.execute(text(f'''INSERT IGNORE INTO `bluehost-logs`.`lookup` VALUES('{ip}', '{country_name}');'''))
 
         #         conn.execute(f'''update lookup SET country = '{error}' WHERE SOURCE = '{ip}';''')
         #         continue
