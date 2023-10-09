@@ -44,7 +44,7 @@ def find(ips: list) -> object:
                 exit()
             if res:
                 country_name = res[0]
-                logger.info(f"{ip} for {country_name} gounf in fwlogs lookup")
+                logger.info(f"{ip} for {country_name} found in fwlogs lookup")
                 country_found.append((ip, country_name))
             else:
                 country_not_found.append((ip))

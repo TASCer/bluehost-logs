@@ -1,11 +1,12 @@
 # TODO hoa seems to work, tascssolutions not so much
 import datetime as dt
 import db_checks
-import get_country_name
+
 import logging
 import my_secrets
 import re
 import update_activity_table
+import update_lookup_country
 import update_lookup_table
 
 from logging import Logger, Formatter
@@ -98,6 +99,6 @@ if __name__ == '__main__':
 	logger.info(f"HITS: {len(processed_logs)} Unique HITS: {len(unique_sources)}")
 	# country_not_found: list = get_country_name.find(unique_sources)
 	update_lookup_table.update(unique_sources)
-	# update_activity_table.update(processed_logs)
+	update_lookup_country.update(processed_logs)
 
 
