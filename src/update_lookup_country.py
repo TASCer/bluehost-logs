@@ -24,7 +24,7 @@ def find(ips: list) -> object:
     country_not_found = []
 
     try:
-        engine: Engine = create_engine(f"mysql+pymysql://{my_secrets.fwlogs_dbuser}:{my_secrets.fwlogs_dbpass}@{my_secrets.fwlogs_dbhost}/{my_secrets.fwlogs_dbname}")
+        engine: Engine = create_engine(f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
 
     except exc.SQLAlchemyError as e:
         logger.critical(str(e))
@@ -32,41 +32,74 @@ def find(ips: list) -> object:
         exit()
 
     with engine.connect() as conn, conn.begin():
-        for ip in ips:
-            # get country name from fwlogs.lookup to populate bluehost_logs.lookup
             try:
-                sql: str = f'''SELECT country from lookup WHERE source = '{ip}' ;'''
+                sql: str = f'''SELECT * from lookup WHERE COUNTRY = '' ;'''
                 lookups: CursorResult = conn.execute(text(sql))
-                res = [i[0] for i in lookups]
+                no_country_name = [i[0] for i in lookups]
             except exc.SQLAlchemyError as e:
                 logger.warning(str(e))
                 lookups = None
                 exit()
-            if res:
-                country_name = res[0]
-                logger.info(f"{ip} for {country_name} found in fwlogs lookup")
-                country_found.append((ip, country_name))
-            else:
-                country_not_found.append((ip))
-        logger.info(f"Country Found: {len(country_found)} Not Found: {len(country_not_found)}")
+
+        # if no_country_name:
+            # try:
+            #     engine: Engine = create_engine(
+            #         f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
+            #
+            # except exc.SQLAlchemyError as e:
+            #     logger.critical(str(e))
+            #     engine = None
+            #     exit()
+            #
+            for ip, country in no_country_name:
+                try:
+                    obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
+                    result: dict = obj.lookup_rdap()
+                    asn_alpha2: str = result['asn_country_code']
+
+                except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
+                        ipwhois.ASNParseError, ipwhois.ASNOriginLookupError, ipwhois.ASNRegistryError,
+                        ipwhois.HostLookupError, ipwhois.HTTPLookupError) as e:
+                    result = None
+                    country = asn_alpha2
+                    error: str = str(e).split('http:')[0]
+                    logger.error(f"{error} {ip}")
+
+                if asn_alpha2 is None or asn_alpha2 == '':
+                    logger.warning(f"{ip} had no alpha2 code, setting country name to 'unknown'")
+                    asn_alpha2: str = 'unknown'
+                    conn.execute(f'''update lookup SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';''')
+                    continue
+
+                elif asn_alpha2.islower():
+                    asn_alpha2: str = asn_alpha2.upper()
+                    logger.warning(f'RDAP responded with lowercase country for {ip}, should be upper')
+
+                else:
+                    country_name: Optional[Any] = COUNTRIES.get(asn_alpha2)
+
+
+# else:
+    #     country_not_found.append((ip))
+    #     logger.info(f"Country Found: {len(country_found)} Not Found: {len(country_not_found)}")
 
     # NEW ENGINE TO OPS TO ADD TO LOOKUP
-    try:
-        engine: Engine = create_engine(
-            f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
-
-    except exc.SQLAlchemyError as e:
-        logger.critical(str(e))
-        engine = None
-        exit()
-
-    with engine.connect() as conn, conn.begin():
-        for s in country_found:
-            ip = s[0]
-            country_name = s[1]
-            conn.execute(text(f'''INSERT IGNORE INTO `bluehost-logs`.`lookup` (`SOURCE`, `COUNTRY`) VALUES ('{ip}', '{country_name}');'''))
-
-    return country_not_found
+    # try:
+    #     engine: Engine = create_engine(
+    #         f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
+    #
+    # except exc.SQLAlchemyError as e:
+    #     logger.critical(str(e))
+    #     engine = None
+    #     exit()
+    #
+    # with engine.connect() as conn, conn.begin():
+    #     for s in country_found:
+    #         ip = s[0]
+    #         country_name = s[1]
+    #         conn.execute(text(f'''INSERT IGNORE INTO `bluehost-logs`.`lookup` (`SOURCE`, `COUNTRY`) VALUES ('{ip}', '{country_name}');'''))
+    #
+    # return country_not_found
         #     use iphois to update lookup with country name
                 # try:
                 #     obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
