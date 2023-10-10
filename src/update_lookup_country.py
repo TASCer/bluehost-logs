@@ -48,11 +48,12 @@ def find():
             #     engine = None
             #     exit()
             #
-            for ip, country in no_country:
+            for ip, country, desc in no_country:
                 try:
                     obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
                     result: dict = obj.lookup_rdap()
                     asn_alpha2: str = result['asn_country_code']
+                    asn_description = result['asn_description']
 
                 except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
                         ipwhois.ASNParseError, ipwhois.ASNOriginLookupError, ipwhois.ASNRegistryError,
