@@ -30,4 +30,4 @@ def update(ips: list) -> object:
     # ISSUE CHECK IF ALREADY FOUND COUNTRY NAME
     with engine.connect() as conn, conn.begin():
         for ip in ips:
-            ins_sql = conn.execute(text(f'''INSERT IGNORE into `bluehost-logs`.lookup values('{ip}', '');'''))
+            ins_sql = conn.execute(text(f'''INSERT IGNORE into `bluehost-logs`.lookup values('{ip}', '', '');'''))
