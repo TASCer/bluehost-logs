@@ -91,7 +91,7 @@ if __name__ == '__main__':
 	if have_database and have_tables:
 		logger.info("RDBMS is available and ready")
 	else:
-		logger.error("RDMS IS NOT OPERATIONAL")
+		logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
 
 	ips, processed_logs = process_logs()
 	# logger.info(f"HITS: {len(processed_logs)}")
@@ -99,6 +99,6 @@ if __name__ == '__main__':
 	logger.info(f"HITS: {len(processed_logs)} Unique HITS: {len(unique_sources)}")
 	# country_not_found: list = get_country_name.find(unique_sources)
 	update_lookup_table.update(unique_sources)
-	update_lookup_country.update(processed_logs)
+	update_lookup_country.find()
 
 
