@@ -81,3 +81,4 @@ def tables():
 			Column('SOURCE', types.VARCHAR(15), primary_key=True),
 			Column('COUNTRY', types.VARCHAR(120))
 		)
+	meta.create_all(engine)
