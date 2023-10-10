@@ -17,7 +17,7 @@ todays_date: str = now.strftime('%D').replace('/', '-')
 COUNTRIES = get_countries()
 
 
-def find(ips: list) -> object:
+def find():
     """Updates lookup table with unique ips from ALPHA-2 to full country name"""
     logger: Logger = logging.getLogger(__name__)
     country_found = []
@@ -33,13 +33,10 @@ def find(ips: list) -> object:
 
     with engine.connect() as conn, conn.begin():
             try:
-                sql: str = f'''SELECT * from lookup WHERE COUNTRY = '' ;'''
-                lookups: CursorResult = conn.execute(text(sql))
-                no_country_name = [i[0] for i in lookups]
+                sql_no_country: CursorResult = conn.execute(text('''SELECT * from lookup WHERE COUNTRY = '' ;'''))
+                no_country: list = [i for i in sql_no_country]
             except exc.SQLAlchemyError as e:
                 logger.warning(str(e))
-                lookups = None
-                exit()
 
         # if no_country_name:
             # try:
@@ -51,7 +48,7 @@ def find(ips: list) -> object:
             #     engine = None
             #     exit()
             #
-            for ip, country in no_country_name:
+            for ip, country in no_country:
                 try:
                     obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
                     result: dict = obj.lookup_rdap()
