@@ -74,7 +74,6 @@ def tables():
 			return False
 
 	if not lookup_tbl:
-		# engine = create_engine(f'mysql+pymysql://{DB_USER}:{DB_PW}@{DB_HOSTNAME}/{DB_NAME}')
 
 		lookup = Table(
 			LOOKUP, meta,
@@ -83,3 +82,5 @@ def tables():
 			Column('DESCRIPTION', types.VARCHAR(120))
 		)
 	meta.create_all(engine)
+
+	return True
