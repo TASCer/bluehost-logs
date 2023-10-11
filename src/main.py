@@ -45,28 +45,8 @@ def process_logs():
 			action = basic_info.split('"')[1]
 			action_verb, action_file, action_http_ver  = action.split(' ')
 			action2 = basic_info.split('"')[2].strip()
+
 			action_code, action_size = action2.split(' ')
-
-			# TODO ABOVE WORKS WORK ON GETTING RES CODE AND SIZE!!
-
-
-			# finds everything between (    )'s
-			client = re.findall("\((.*?)\)", log)
-
-			if not client:
-				print("NO '()'! ")
-				client_os, client_format = 2 * ('',)
-
-			# if len(client) == 0:
-				# print(f"{ip} has issue with client re pattern, alter re to resolve")
-			elif len(client) == 1:
-				client_format = ''
-				client_os = client[0]
-			else:
-				client_os = client[0]
-				client_format = client[1]
-			# find all "xxxxx"
-
 			agent_info = log.split('" "')[1]
 			agent_list = agent_info.split(' ')
 			agent_name = agent_list[0]
@@ -76,6 +56,25 @@ def process_logs():
 
 			agent_referer_ip = agent_list[-1].strip()
 			agent_referer_url = agent_list[-2]
+
+
+			# TODO ABOVE WORKS WORK ON GETTING RES CODE AND SIZE!!
+
+			# finds everything between (    )'s
+			client: list = re.findall("\((.*?)\)", log)
+			print(len(client))
+			if not client:
+				print(f"NO '()'! {ip}")
+				client_os, client_format = 2 * ('',)
+
+			elif len(client) == 1:
+				client_format = ''
+				client_os = client[0]
+			else:
+				client_os = client[0]
+				client_format = client[1]
+
+
 			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}"
 				  f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}{new_line}agent_name: {agent_name}"
 				  f"{new_line}agent_referer_ip: {agent_referer_ip}{new_line}agent_referer_url: {agent_referer_url}{new_line}")
