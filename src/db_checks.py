@@ -64,10 +64,7 @@ def tables():
 				ACTIVITY, meta,
 				Column('id', types.INT, autoincrement=True, primary_key=True),
 				Column('SOURCE', types.VARCHAR(15)),
-				# Column('ts', types.TIMESTAMP)
-				Column('DATE', types.DATE),
-				Column('TIME', types.TIME)
-				# Column('LONG', types.INT)
+				Column('ACCESSED', types.TIMESTAMP(timezone=True))
 			)
 		except (exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
 			logger.error(str(e))
