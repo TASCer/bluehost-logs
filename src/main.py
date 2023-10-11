@@ -34,14 +34,18 @@ def process_logs():
 	with open('../tests/test_tascsolutions_sslOct-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
+			ip = basic.split("- - ")[0]
+			ip = ip.rstrip()
+			if ip == f'{my_secrets.home_ip}':  # skip cron jobs on my server
+				continue
+
 			basic_info = basic.split("- - ")[1]
 			server_timestamp: str = basic_info.split(']')[0][1:]
 
-			ip = basic.split("- - ")[0]
-			ip = ip.rstrip()
+			action = basic_info.split('"')[1]
+			action_verb, action_file, action_http_ver  = action.split(' ')
 
-			if ip == f'{my_secrets.home_ip}':  # skip cron jobs on my server
-				continue
+
 			# find everything between (    )
 			client = re.findall("\((.*?)\)", log)
 
@@ -58,12 +62,6 @@ def process_logs():
 				client_os = client[0]
 				client_format = client[1]
 			# find all "xxxxx"
-			action = re.findall('\"(.*?\")', basic)
-			action_info = action[0]
-			action_info = action_info.split()
-			action_verb = action_info[0]
-			action_file = action_info[1].replace('/', '')
-			action_http_ver = action_info[2]
 
 			agent_info = log.split('" "')[1]
 			agent_list = agent_info.split(' ')
@@ -74,14 +72,14 @@ def process_logs():
 
 			agent_referer_ip = agent_list[-1].strip()
 			agent_referer_url = agent_list[-2]
-			# print(f"ip: {ip}{new_line}country: {country}{new_line}date: {date}{new_line}time: {time}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}"
-			# 	  f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}{new_line}agent_name: {agent_name}"
-			# 	  f"{new_line}agent_referer_ip: {agent_referer_ip}{new_line}agent_referer_url: {agent_referer_url}{new_line}")
+			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}"
+				  f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}{new_line}agent_name: {agent_name}"
+				  f"{new_line}agent_referer_ip: {agent_referer_ip}{new_line}agent_referer_url: {agent_referer_url}{new_line}")
 			# f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}")
 			# print(f"{ip}\t\t {agent_name}")
-			# print("-------------------------------------------------------")
+			print("-------------------------------------------------------")
 			sources.append(ip)
-			log_entries.append((ip, server_timestamp))
+			log_entries.append((ip, server_timestamp, action_verb, action_file, action_http_ver))
 	return sources, log_entries
 
 
