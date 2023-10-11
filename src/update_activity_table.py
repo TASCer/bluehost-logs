@@ -32,16 +32,12 @@ def update(log_entries: list) -> object:
 
     with engine.connect() as conn, conn.begin():
         for ip, ts in log_entries:
-            ts = ts.replace(':', ' ', 1)
-            date, time, tz = ts.split()
-            print("ORIG DATE: ", date)
-            print("ORIG TIME: ", time)
-            date_obj = parse(date)
-            print("PARSED DATE: ", date_obj)
-            time_obj = parse(time)#datetime.strptime(time, '%HH::%mm::%S')
-            print("PARSED TIME: ", time_obj)
-            # date = datetime.strptime(date, "")
-            # ts = parse(ts)
-            # print(ip, ts, type(ts))
-            conn.execute(text(f'''INSERT INTO `bluehost-logs`.`activity` VALUES(id, '{ip}', '{date_obj}', '{time_obj}');'''))
+            ts_orig = ts.replace(':', ' ', 1)
+            print("ORIG: ", ts)
+            ts_split = ts_orig.split(" ", 2)
+            print("SPLIT!: ", ts_split)
+            ts = ' '.join(ts_split[0:2])
+            ts_parsed = parse(ts)
+            print("PARSED: ", ts_parsed, type(ts_parsed))
+            conn.execute(text(f'''INSERT INTO `bluehost-logs`.`activity` VALUES(id, '{ip}', '{ts_parsed}');'''))
 
