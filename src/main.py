@@ -43,7 +43,7 @@ def process_logs():
 			server_timestamp: str = basic_info.split(']')[0][1:]
 
 			action = basic_info.split('"')[1]
-			action_verb, action_file, action_http_ver  = action.split(' ')
+			action_verb, action_file, action_http_ver = action.split(' ')
 			action2 = basic_info.split('"')[2].strip()
 
 			action_code, action_size = action2.split(' ')
@@ -56,7 +56,6 @@ def process_logs():
 
 			agent_referer_ip = agent_list[-1].strip()
 			agent_referer_url = agent_list[-2]
-
 
 			# TODO ABOVE WORKS WORK ON GETTING RES CODE AND SIZE!!
 
@@ -73,7 +72,6 @@ def process_logs():
 			else:
 				client_os = client[0]
 				client_format = client[1]
-
 
 			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}"
 				  f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}{new_line}agent_name: {agent_name}"
@@ -105,5 +103,3 @@ if __name__ == '__main__':
 	update_lookup_table.update(unique_sources)
 	update_lookup_country.find(unique_sources)
 	update_activity_table.update(processed_logs)
-
-
