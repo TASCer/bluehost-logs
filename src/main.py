@@ -103,5 +103,6 @@ if __name__ == '__main__':
 	# country_not_found: list = get_country_name.find(unique_sources)
 	update_lookup_table.update(unique_sources)
 	update_lookup_country.find(unique_sources)
+	update_activity_table.update(processed_logs)
 
 
