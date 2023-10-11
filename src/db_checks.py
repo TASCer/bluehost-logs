@@ -1,7 +1,6 @@
 import datetime as dt
 import logging
 import my_secrets
-# import pandas as pd
 import sqlalchemy as sa
 
 from logging import Logger
@@ -64,6 +63,9 @@ def tables():
 				ACTIVITY, meta,
 				Column('id', types.INT, autoincrement=True, primary_key=True),
 				Column('SOURCE', types.VARCHAR(15)),
+				Column('ACTION', types.VARCHAR(12)),
+				Column('FILE', types.VARCHAR(120)),
+				Column('TYPE', types.VARCHAR(20)),
 				Column('ACCESSED', types.TIMESTAMP(timezone=True))
 			)
 		except (exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
