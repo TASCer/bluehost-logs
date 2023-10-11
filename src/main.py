@@ -44,9 +44,13 @@ def process_logs():
 
 			action = basic_info.split('"')[1]
 			action_verb, action_file, action_http_ver  = action.split(' ')
+			action2 = basic_info.split('"')[2].strip()
+			action_code, action_size = action2.split(' ')
+
+			# TODO ABOVE WORKS WORK ON GETTING RES CODE AND SIZE!!
 
 
-			# find everything between (    )
+			# finds everything between (    )'s
 			client = re.findall("\((.*?)\)", log)
 
 			if not client:
