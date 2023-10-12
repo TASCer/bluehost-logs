@@ -67,7 +67,9 @@ def tables():
 				Column('FILE', types.VARCHAR(120)),
 				Column('TYPE', types.VARCHAR(20)),
 				Column('ACCESSED', types.TIMESTAMP(timezone=True)),
-				Column('REF_URL', types.VARCHAR(100))
+				Column('REF_URL', types.VARCHAR(100)),
+				Column('REF_IP', types.VARCHAR(100))
+
 			)
 		except (exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
 			logger.error(str(e))
