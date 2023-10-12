@@ -85,7 +85,7 @@ def process_logs():
 			# print(f"{ip}\t\t {agent_name}")
 			print("-------------------------------------------------------")
 			sources.append(ip)
-			log_entries.append((ip, server_timestamp, action_verb, action_file, action_http_ver))
+			log_entries.append((ip, server_timestamp, action_verb, action_file, action_http_ver, referer_url))
 	return sources, log_entries
 
 
