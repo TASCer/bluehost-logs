@@ -43,7 +43,10 @@ def find(ips: list):
                     obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
                     result: dict = obj.lookup_rdap()
                     asn_alpha2: str = result['asn_country_code']
-                    asn_description = result['asn_description'].replace(',', '')
+                    if not result['asn_description'] is None:
+                        asn_description = result['asn_country_code'].replace(',', '')
+                    else:
+                        asn_description = ''
 
                 except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
                         ipwhois.ASNParseError, ipwhois.ASNOriginLookupError, ipwhois.ASNRegistryError,
