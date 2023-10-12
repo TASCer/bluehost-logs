@@ -9,6 +9,7 @@ import update_activity_table
 import update_lookup_country
 import update_lookup_table
 
+from collections import namedtuple
 from logging import Logger, Formatter
 
 now: dt = dt.date.today()
@@ -54,10 +55,14 @@ def process_logs():
 			if agent_name.startswith('-'):
 				agent_name = "ERROR"
 
-			agent_referer_ip = agent_list[-1].strip()
-			agent_referer_url = agent_list[-2]
+			referer_ip = agent_list[-1].strip()
+			referer_url = agent_list[-2]
+
+
 
 			# TODO ABOVE WORKS WORK ON GETTING RES CODE AND SIZE!!
+
+
 
 			# finds everything between (    )'s
 			client: list = re.findall("\((.*?)\)", log)
@@ -75,7 +80,7 @@ def process_logs():
 
 			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}"
 				  f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}{new_line}agent_name: {agent_name}"
-				  f"{new_line}agent_referer_ip: {agent_referer_ip}{new_line}agent_referer_url: {agent_referer_url}{new_line}")
+				  f"{new_line}agent_referer_ip: {referer_ip}{new_line}agent_referer_url: {referer_url}{new_line}")
 			# f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}")
 			# print(f"{ip}\t\t {agent_name}")
 			print("-------------------------------------------------------")
