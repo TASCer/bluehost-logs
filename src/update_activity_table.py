@@ -36,8 +36,8 @@ def update(log_entries: list) -> object:
             ts_split = ts_orig.split(" ", 2)
             ts = ' '.join(ts_split[0:2])
             ts_parsed = parse(ts)
-            print(ref_url)
+
             try:
                 conn.execute(text(f'''INSERT INTO `bluehost-logs`.`activity` VALUES(id, '{ip}', '{action}', '{file}', '{conn_type}', '{ts_parsed}', '{ref_url}', '{ref_ip}');'''))
-            except exc.SQLAlchemyError as e:
+            except (exc.SQLAlchemyError, exc.DataError) as e:
                 logger.error(str(e))
