@@ -62,7 +62,7 @@ def tables():
 			activity = Table(
 				ACTIVITY, meta,
 				Column('id', types.INT, autoincrement=True, primary_key=True),
-				Column('SOURCE', types.VARCHAR(15)),
+				Column('SOURCE', types.VARCHAR(15), primary_key=True),
 				Column('ACTION', types.VARCHAR(12)),
 				Column('FILE', types.VARCHAR(120)),
 				Column('TYPE', types.VARCHAR(20)),

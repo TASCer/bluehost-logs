@@ -32,7 +32,7 @@ new_line = '\n'
 def process_logs():
 	log_entries: list = []
 	sources: list = []
-	with open('../input/hoaSep-2023') as logs:
+	with open('../tests/test_tascsolutions_sslOct-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
@@ -58,15 +58,11 @@ def process_logs():
 			agent_name = agent_list[0]
 
 			if agent_name.startswith('-'):
-				agent_name = "ERROR"
+				agent_name = "not found"
 
 			referer_ip = agent_list[-1].strip()
 			referer_url = agent_list[-2]
-
-
-
 			# TODO ABOVE WORKS WORK ON GETTING RES CODE AND SIZE!!
-
 
 
 			# finds everything between all(    )
@@ -110,6 +106,6 @@ if __name__ == '__main__':
 	unique_sources: set = set(ips)
 	logger.info(f"HITS: {len(processed_logs)} Unique HITS: {len(unique_sources)}")
 	# country_not_found: list = get_country_name.find(unique_sources)
-	# update_lookup_table.update(unique_sources)
-	# update_lookup_country.find(unique_sources)
+	update_lookup_table.update(unique_sources)
+	update_lookup_country.find(unique_sources)
 	update_activity_table.update(processed_logs)
