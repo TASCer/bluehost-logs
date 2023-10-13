@@ -31,13 +31,13 @@ def update(log_entries: list) -> object:
         exit()
 
     with engine.connect() as conn, conn.begin():
-        for ip, ts, action, file, conn_type, ref_url, ref_ip in log_entries:
+        for ip, ts, action, file, conn_type, ref_url, ref_ip, action_code, action_size in log_entries:
             ts_orig = ts.replace(":", " ", 1)
             ts_split = ts_orig.split(" ", 2)
             ts = ' '.join(ts_split[0:2])
             ts_parsed = parse(ts)
 
             try:
-                conn.execute(text(f'''INSERT INTO `bluehost-logs`.`activity` VALUES(id, '{ip}', '{action}', '{file}', '{conn_type}', '{ts_parsed}', '{ref_url}', '{ref_ip}');'''))
+                conn.execute(text(f'''INSERT INTO `bluehost-logs`.`activity` VALUES(id, '{ip}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}', '{ts_parsed}');'''))
             except (exc.SQLAlchemyError, exc.DataError) as e:
                 logger.error(str(e))

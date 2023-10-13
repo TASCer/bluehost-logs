@@ -69,7 +69,7 @@ def process_logs():
 
 
 
-			# finds everything between all'('    ')'s
+			# finds everything between all(    )
 			client: list = re.findall("\((.*?)\)", log)
 			print(len(client))
 
@@ -85,12 +85,12 @@ def process_logs():
 				client_format = client[1]
 
 			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}agent_name: {agent_name}{new_line}action code: {action_code}{new_line}size: {action_size}")
-				  # f"{new_line}agent_referer_ip: {referer_ip}{new_line}agent_referer_url: {referer_url}{new_line}")
+				# f"{new_line}agent_referer_ip: {referer_ip}{new_line}agent_referer_url: {referer_url}{new_line}")
 			# f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}")
 			# print(f"{ip}\t\t {agent_name}")
 			print("-------------------------------------------------------")
 			sources.append(ip)
-			log_entries.append((ip, server_timestamp, action, action_file, action_http_ver, referer_url, referer_ip))
+			log_entries.append((ip, server_timestamp, action, action_file, action_http_ver, referer_url, referer_ip, action_code, action_size))
 	return sources, log_entries
 
 
