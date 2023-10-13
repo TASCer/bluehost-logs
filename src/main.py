@@ -32,7 +32,7 @@ new_line = '\n'
 def process_logs():
 	log_entries: list = []
 	sources: list = []
-	with open('../tests/test_tascsolutions_sslOct-2023') as logs:
+	with open('../input/hoaSep-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
@@ -43,8 +43,13 @@ def process_logs():
 			basic_info = basic.split("- - ")[1]
 			server_timestamp: str = basic_info.split(']')[0][1:]
 
-			action = basic_info.split('"')[1]
-			action_verb, action_file, action_http_ver = action.split(' ')
+			action1 = basic_info.split('"')[1]
+			action, action_file, action_http_ver = action1.split(' ')
+
+			if len(action_file) >= 120:
+				action_file = action_file.split('?')[0]
+				logger.warning(f"{ip} had too long file request")
+
 			action2 = basic_info.split('"')[2].strip()
 
 			action_code, action_size = action2.split(' ')
@@ -64,9 +69,10 @@ def process_logs():
 
 
 
-			# finds everything between (    )'s
+			# finds everything between all'('    ')'s
 			client: list = re.findall("\((.*?)\)", log)
 			print(len(client))
+
 			if not client:
 				print(f"NO '()'! {ip}")
 				client_os, client_format = 2 * ('',)
@@ -78,14 +84,13 @@ def process_logs():
 				client_os = client[0]
 				client_format = client[1]
 
-			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}"
-				  f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}{new_line}agent_name: {agent_name}"
-				  f"{new_line}agent_referer_ip: {referer_ip}{new_line}agent_referer_url: {referer_url}{new_line}")
+			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}agent_name: {agent_name}{new_line}action code: {action_code}{new_line}size: {action_size}")
+				  # f"{new_line}agent_referer_ip: {referer_ip}{new_line}agent_referer_url: {referer_url}{new_line}")
 			# f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}")
 			# print(f"{ip}\t\t {agent_name}")
 			print("-------------------------------------------------------")
 			sources.append(ip)
-			log_entries.append((ip, server_timestamp, action_verb, action_file, action_http_ver, referer_url, referer_ip))
+			log_entries.append((ip, server_timestamp, action, action_file, action_http_ver, referer_url, referer_ip))
 	return sources, log_entries
 
 
@@ -105,6 +110,6 @@ if __name__ == '__main__':
 	unique_sources: set = set(ips)
 	logger.info(f"HITS: {len(processed_logs)} Unique HITS: {len(unique_sources)}")
 	# country_not_found: list = get_country_name.find(unique_sources)
-	update_lookup_table.update(unique_sources)
-	update_lookup_country.find(unique_sources)
+	# update_lookup_table.update(unique_sources)
+	# update_lookup_country.find(unique_sources)
 	update_activity_table.update(processed_logs)
