@@ -1,4 +1,4 @@
-# TODO issues with field data -- hoa seems to work, tascssolutions not so much
+# TODO THINGS SEEM TO WORK, DO MORE TESTING and fully populate lookup country. Start ftresh in 2024
 import datetime as dt
 import db_checks
 
@@ -37,7 +37,9 @@ def process_logs():
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
 			ip = ip.rstrip()
-			if ip == f'{my_secrets.home_ip}':  # skip cron jobs on my server
+
+			# skip parsing cron jobs on server
+			if ip == f'{my_secrets.home_ip}':
 				continue
 
 			basic_info = basic.split("- - ")[1]
@@ -62,15 +64,12 @@ def process_logs():
 
 			referer_ip = agent_list[-1].strip()
 			referer_url = agent_list[-2]
-			# TODO ABOVE WORKS WORK ON GETTING RES CODE AND SIZE!!
-
 
 			# finds everything between all(    )
 			client: list = re.findall("\((.*?)\)", log)
-			print(len(client))
 
 			if not client:
-				print(f"NO '()'! {ip}")
+				logger.info(f"NO client info for: {ip}")
 				client_os, client_format = 2 * ('',)
 
 			elif len(client) == 1:
@@ -80,13 +79,14 @@ def process_logs():
 				client_os = client[0]
 				client_format = client[1]
 
-			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}agent_name: {agent_name}{new_line}action code: {action_code}{new_line}size: {action_size}")
+			# print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}agent_name: {agent_name}{new_line}action code: {action_code}{new_line}size: {action_size}")
 				# f"{new_line}agent_referer_ip: {referer_ip}{new_line}agent_referer_url: {referer_url}{new_line}")
 			# f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}")
 			# print(f"{ip}\t\t {agent_name}")
 			print("-------------------------------------------------------")
 			sources.append(ip)
 			log_entries.append((ip, server_timestamp, action, action_file, action_http_ver, referer_url, referer_ip, action_code, action_size))
+
 	return sources, log_entries
 
 
@@ -105,7 +105,6 @@ if __name__ == '__main__':
 	logger.info(f"HITS: {len(processed_logs)}")
 	unique_sources: set = set(ips)
 	logger.info(f"HITS: {len(processed_logs)} Unique HITS: {len(unique_sources)}")
-	# country_not_found: list = get_country_name.find(unique_sources)
 	update_lookup_table.update(unique_sources)
 	update_lookup_country.find(unique_sources)
 	update_activity_table.update(processed_logs)
