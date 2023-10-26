@@ -1,6 +1,6 @@
 /input/*
 /misc/bhlogs.pbix
 /src/my_secrets.py
-/tests/
+/src/tests/
 /.idea/*
 /*.log

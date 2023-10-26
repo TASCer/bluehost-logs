@@ -1,4 +1,4 @@
-# TODO THINGS SEEM TO WORK, DO MORE TESTING and fully populate lookup country. Start ftresh in 2024
+# TODO THINGS SEEM TO WORK, DO MORE TESTING and fully populate lookup country, create db backups. Start fresh in 2024
 import datetime as dt
 import db_checks
 
@@ -9,7 +9,7 @@ import update_activity_table
 import update_lookup_country
 import update_lookup_table
 
-from collections import namedtuple
+# from collections import namedtuple
 from logging import Logger, Formatter
 
 now: dt = dt.date.today()
@@ -32,14 +32,14 @@ new_line = '\n'
 def process_logs():
 	log_entries: list = []
 	sources: list = []
-	with open('../tests/test_tascsolutions_sslOct-2023') as logs:
+	with open('tests/test_tascsolutions_sslOct-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
 			ip = ip.rstrip()
 
-			# skip parsing cron jobs on server
-			if ip == f'{my_secrets.home_ip}':
+			# skip parsing system cron jobs on server
+			if ip == f'{my_secrets.bh_home_ip}':
 				continue
 
 			basic_info = basic.split("- - ")[1]
