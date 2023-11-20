@@ -32,7 +32,7 @@ new_line = '\n'
 def process_logs():
 	log_entries: list = []
 	sources: list = []
-	with open('tests/test_hoa_sslOct-2023') as logs:
+	with open('../input/hoaSep-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
@@ -50,7 +50,7 @@ def process_logs():
 
 			if len(action_file) >= 120:
 				action_file = action_file.split('?')[0]
-				logger.warning(f"{ip} had too long file request")
+				logger.warning(f"{ip} had too long requested file name, truncated")
 
 			action2 = basic_info.split('"')[2].strip()
 
@@ -69,18 +69,18 @@ def process_logs():
 			client: list = re.findall("\((.*?)\)", log)
 
 			if not client:
-				logger.info(f"NO client info for: {ip}")
 				client_os, client_format = 2 * ('NA',)
 
 			elif len(client) == 1:
 				client_format = 'NA'
 				client_os = client[0]
+				client_os = client_os.replace(';', '')
+
 			else:
 				client_os = client[0]
+				client_os = client_os.replace(';', '')
 				client_format = client[1]
 
-			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}")
-			print("-------------------------------------------------------")
 			sources.append(ip)
 			log_entries.append((ip, server_timestamp, action, action_file, action_http_ver, referer_url, referer_ip, action_code, action_size, agent_name, client_os))
 
