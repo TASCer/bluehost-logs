@@ -32,14 +32,14 @@ new_line = '\n'
 def process_logs():
 	log_entries: list = []
 	sources: list = []
-	with open('../input/hoaSep-2023') as logs:
+	with open('../input/tascsolutions_sslOct-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
 			ip = ip.rstrip()
 
-			# skip parsing system cron jobs on server
-			if ip == f'{my_secrets.bh_home_ip}':
+			# skip parsing system cron jobs on server or activity from my home office
+			if ip == f'{my_secrets.bh_home_ip}' or ip == f'{my_secrets.home_ip}':
 				continue
 
 			basic_info = basic.split("- - ")[1]
@@ -57,7 +57,7 @@ def process_logs():
 			action_code, action_size = action2.split(' ')
 			agent_info = log.split('" "')[1]
 			agent_list = agent_info.split(' ')
-			agent_name = agent_list[0]
+			agent_name = agent_list[0].replace('"', '')
 
 			if agent_name.startswith('-'):
 				agent_name = "NA"
