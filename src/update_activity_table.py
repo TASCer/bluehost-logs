@@ -44,6 +44,6 @@ def update(log_entries: list) -> object:
             ts_parsed = parse_timestamp(ts)
 
             try:
-                conn.execute(text(f'''INSERT INTO `bluehost-logs`.`activity` VALUES(id, '{ip}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}', '{ts_parsed}');'''))
+                conn.execute(text(f'''INSERT INTO `bluehost-logs`.`activity` VALUES('{ip}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}', '{ts_parsed}');'''))
             except (exc.SQLAlchemyError, exc.DataError) as e:
                 logger.error(str(e))
