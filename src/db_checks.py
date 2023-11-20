@@ -61,7 +61,6 @@ def tables():
 		try:
 			activity = Table(
 				ACTIVITY, meta,
-				Column('id', types.INT, autoincrement=True, primary_key=True),
 				Column('SOURCE', types.VARCHAR(15), primary_key=True),
 				Column('ACTION', types.VARCHAR(12)),
 				Column('FILE', types.VARCHAR(120)),
@@ -70,7 +69,7 @@ def tables():
 				Column('ACTION_SIZE', types.VARCHAR(100)),
 				Column('REF_URL', types.VARCHAR(100)),
 				Column('REF_IP', types.VARCHAR(100)),
-				Column('ACCESSED', types.TIMESTAMP(timezone=True))
+				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True)
 			)
 
 		except (exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
