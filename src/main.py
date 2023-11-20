@@ -79,10 +79,10 @@ def process_logs():
 				client_os = client[0]
 				client_format = client[1]
 
-			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}agent_name: {agent_name}{new_line}")
+			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}")
 			print("-------------------------------------------------------")
 			sources.append(ip)
-			log_entries.append((ip, server_timestamp, action, action_file, action_http_ver, referer_url, referer_ip, action_code, action_size, agent_name))
+			log_entries.append((ip, server_timestamp, action, action_file, action_http_ver, referer_url, referer_ip, action_code, action_size, agent_name, client_os))
 
 	return sources, log_entries
 

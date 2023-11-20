@@ -40,10 +40,10 @@ def update(log_entries: list) -> object:
         exit()
 
     with engine.connect() as conn, conn.begin():
-        for ip, ts, action, file, conn_type, ref_url, ref_ip, action_code, action_size, agent_name in log_entries:
+        for ip, ts, action, file, conn_type, ref_url, ref_ip, action_code, action_size, agent_name, client_os in log_entries:
             ts_parsed = parse_timestamp(ts)
 
             try:
-                conn.execute(text(f'''INSERT INTO `bluehost-logs`.`activity` VALUES('{ip}', '{agent_name}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}', '{ts_parsed}');'''))
+                conn.execute(text(f'''INSERT INTO `bluehost-logs`.`activity` VALUES('{ip}', '{client_os}', '{agent_name}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}', '{ts_parsed}');'''))
             except (exc.SQLAlchemyError, exc.DataError) as e:
                 logger.error(str(e))

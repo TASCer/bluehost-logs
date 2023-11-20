@@ -62,6 +62,7 @@ def tables():
 			activity = Table(
 				ACTIVITY, meta,
 				Column('SOURCE', types.VARCHAR(15), primary_key=True),
+				Column('CLIENT_OS', types.VARCHAR(100)),
 				Column('AGENT', types.VARCHAR(100)),
 				Column('ACTION', types.VARCHAR(12)),
 				Column('FILE', types.VARCHAR(120)),
