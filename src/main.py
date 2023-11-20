@@ -32,7 +32,7 @@ new_line = '\n'
 def process_logs():
 	log_entries: list = []
 	sources: list = []
-	with open('tests/test_tascsolutions_sslOct-2023') as logs:
+	with open('tests/test_hoa_sslOct-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
@@ -60,7 +60,7 @@ def process_logs():
 			agent_name = agent_list[0]
 
 			if agent_name.startswith('-'):
-				agent_name = "not found"
+				agent_name = "NA"
 
 			referer_ip = agent_list[-1].strip()
 			referer_url = agent_list[-2]
@@ -70,19 +70,16 @@ def process_logs():
 
 			if not client:
 				logger.info(f"NO client info for: {ip}")
-				client_os, client_format = 2 * ('',)
+				client_os, client_format = 2 * ('NA',)
 
 			elif len(client) == 1:
-				client_format = ''
+				client_format = 'NA'
 				client_os = client[0]
 			else:
 				client_os = client[0]
 				client_format = client[1]
 
-			# print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}agent_name: {agent_name}{new_line}action code: {action_code}{new_line}size: {action_size}")
-				# f"{new_line}agent_referer_ip: {referer_ip}{new_line}agent_referer_url: {referer_url}{new_line}")
-			# f"action verb: {action_verb}{new_line}action_file: {action_file}{new_line}action_http_ver: {action_http_ver}")
-			# print(f"{ip}\t\t {agent_name}")
+			print(f"ip: {ip}{new_line}client_os: {client_os}{new_line}client_format: {client_format}{new_line}agent_name: {agent_name}{new_line}")
 			print("-------------------------------------------------------")
 			sources.append(ip)
 			log_entries.append((ip, server_timestamp, action, action_file, action_http_ver, referer_url, referer_ip, action_code, action_size))
