@@ -17,7 +17,7 @@ todays_date: str = now.strftime('%D').replace('/', '-')
 COUNTRIES = get_countries()
 
 
-def find(ips: list):
+def find(unique_ips: list):
     """Updates lookup table with unique ips from ALPHA-2 to full country name"""
     logger: Logger = logging.getLogger(__name__)
     country_found = []
@@ -32,6 +32,7 @@ def find(ips: list):
         exit()
 
     with engine.connect() as conn, conn.begin():
+            logger.info("Updating lookup table with source country name and description")
             try:
                 sql_no_country: CursorResult = conn.execute(text('''SELECT * from lookup WHERE COUNTRY = '' ;'''))
                 no_country: list = [i for i in sql_no_country]
@@ -44,10 +45,11 @@ def find(ips: list):
                     result: dict = obj.lookup_rdap()
                     asn_alpha2: str = result['asn_country_code']
                     if not result['asn_description'] is None:
-                        asn_description = result['asn_country_code'].replace(',', '')
+                        asn_description = result['asn_description']
+                        asn_description = asn_description.split()[0].replace(',', '')
+                        print(asn_description)
                     else:
-                        asn_description = ''
-
+                        asn_description = asn_alpha2
                 except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
                         ipwhois.ASNParseError, ipwhois.ASNOriginLookupError, ipwhois.ASNRegistryError,
                         ipwhois.HostLookupError, ipwhois.HTTPLookupError) as e:
@@ -75,7 +77,7 @@ def find(ips: list):
                                 `DESCRIPTION` = '{asn_description}'
                             WHERE `SOURCE` = '{ip}';'''
                                   ))
-
+    logger.info("Lookup table updated")
                             # return country_not_found
         #     use iphois to update lookup with country name
                 # try:
