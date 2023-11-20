@@ -102,7 +102,6 @@ if __name__ == '__main__':
 		logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
 
 	ips, processed_logs = process_logs()
-	logger.info(f"HITS: {len(processed_logs)}")
 	unique_sources: set = set(ips)
 	logger.info(f"HITS: {len(processed_logs)} Unique HITS: {len(unique_sources)}")
 	update_lookup_table.update(unique_sources)
