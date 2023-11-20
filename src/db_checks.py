@@ -62,11 +62,12 @@ def tables():
 			activity = Table(
 				ACTIVITY, meta,
 				Column('SOURCE', types.VARCHAR(15), primary_key=True),
+				Column('AGENT', types.VARCHAR(100)),
 				Column('ACTION', types.VARCHAR(12)),
 				Column('FILE', types.VARCHAR(120)),
 				Column('TYPE', types.VARCHAR(20)),
 				Column('ACTION_CODE', types.VARCHAR(10)),
-				Column('ACTION_SIZE', types.VARCHAR(100)),
+				Column('ACTION_SIZE', types.VARCHAR(100), primary_key=True),
 				Column('REF_URL', types.VARCHAR(100)),
 				Column('REF_IP', types.VARCHAR(100)),
 				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True)
