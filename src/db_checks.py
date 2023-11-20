@@ -62,15 +62,15 @@ def tables():
 			activity = Table(
 				ACTIVITY, meta,
 				Column('SOURCE', types.VARCHAR(15), primary_key=True),
-				Column('CLIENT_OS', types.VARCHAR(100)),
-				Column('AGENT', types.VARCHAR(100)),
-				Column('ACTION', types.VARCHAR(12)),
-				Column('FILE', types.VARCHAR(120)),
-				Column('TYPE', types.VARCHAR(20)),
-				Column('ACTION_CODE', types.VARCHAR(10)),
+				Column('CLIENT_OS', types.VARCHAR(200), primary_key=True),
+				Column('AGENT', types.VARCHAR(100), primary_key=True),
+				Column('ACTION', types.VARCHAR(12), primary_key=True),
+				Column('FILE', types.VARCHAR(120), primary_key=True),
+				Column('TYPE', types.VARCHAR(20), primary_key=True),
+				Column('ACTION_CODE', types.VARCHAR(10), primary_key=True),
 				Column('ACTION_SIZE', types.VARCHAR(100), primary_key=True),
-				Column('REF_URL', types.VARCHAR(100)),
-				Column('REF_IP', types.VARCHAR(100)),
+				Column('REF_URL', types.VARCHAR(100), primary_key=True),
+				Column('REF_IP', types.VARCHAR(100), primary_key=True),
 				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True)
 			)
 
