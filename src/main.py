@@ -26,8 +26,6 @@ fh.setFormatter(formatter)
 
 root_logger.addHandler(fh)
 
-new_line = '\n'
-
 
 def process_logs():
 	log_entries: list = []
@@ -45,16 +43,28 @@ def process_logs():
 			basic_info = basic.split("- - ")[1]
 			server_timestamp: str = basic_info.split(']')[0][1:]
 
-			action1 = basic_info.split('"')[1]
-			action, action_file, action_http_ver = action1.split(' ')
+			try:
+				action1 = basic_info.split('"')[1]
+				action, action_file, action_http_ver = action1.split(' ')
+
+			except ValueError as e:
+				logger.error(e)
+				continue
 
 			if len(action_file) >= 120:
 				action_file = action_file.split('?')[0]
 				logger.warning(f"{ip} had too long requested file name, truncated")
 
-			action2 = basic_info.split('"')[2].strip()
 
-			action_code, action_size = action2.split(' ')
+			try:
+				action2 = basic_info.split('"')[2].strip()
+				action_code, action_size = action2.split(' ')
+
+			except ValueError as e:
+				logger.error(e)
+				continue
+
+
 			agent_info = log.split('" "')[1]
 			agent_list = agent_info.split(' ')
 			agent_name = agent_list[0].replace('"', '')
