@@ -26,11 +26,13 @@ fh.setFormatter(formatter)
 
 root_logger.addHandler(fh)
 
+logger: Logger = logging.getLogger(__name__)
+
 
 def process_logs():
 	log_entries: list = []
 	sources: list = []
-	with open('../input/tascsolutions_sslOct-2023') as logs:
+	with open('tests/test_tascsMay-2023-ISSUES') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
@@ -48,11 +50,14 @@ def process_logs():
 				action, action_file, action_http_ver = action1.split(' ')
 
 			except ValueError as e:
-				logger.error(e)
+				logger.error(f"{ip}--{e}")
 				continue
 
 			if len(action_file) >= 120:
-				action_file = action_file.split('?')[0]
+				action_list = action_file.split('?')
+				action_file1 = action_list[0]
+				action_file2 = action_list[1][:80]
+				action_file = action_file1+action_file2+' *TRUNCATED*'
 				logger.warning(f"{ip} had too long requested file name, truncated")
 
 
@@ -61,7 +66,7 @@ def process_logs():
 				action_code, action_size = action2.split(' ')
 
 			except ValueError as e:
-				logger.error(e)
+				logger.error(e, "Possible bot, check logs")
 				continue
 
 
@@ -98,7 +103,6 @@ def process_logs():
 
 
 if __name__ == '__main__':
-	logger: Logger = logging.getLogger(__name__)
 	logger.info("Checking RDBMS Availability")
 	have_database: bool = db_checks.schema()
 	have_tables: bool = db_checks.tables()
@@ -112,5 +116,5 @@ if __name__ == '__main__':
 	unique_sources: set = set(ips)
 	logger.info(f"HITS: {len(processed_logs)} Unique HITS: {len(unique_sources)}")
 	update_lookup_table.update(unique_sources)
-	update_lookup_country.find(unique_sources)
+	update_lookup_country.get(unique_sources)
 	update_activity_table.update(processed_logs)
