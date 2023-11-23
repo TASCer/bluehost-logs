@@ -45,5 +45,5 @@ def update(log_entries: list) -> object:
 
             try:
                 conn.execute(text(f'''INSERT IGNORE INTO `bluehost-logs`.`activity` VALUES('{ip}', '{client_os}', '{agent_name}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}', '{ts_parsed}');'''))
-            except (exc.SQLAlchemyError, exc.DataError) as e:
-                logger.error(str(e))
+            except (exc.SQLAlchemyError, exc.ProgrammingError, exc.DataError) as e:
+                logger.error(e)
