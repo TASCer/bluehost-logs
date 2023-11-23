@@ -17,7 +17,7 @@ todays_date: str = now.strftime('%D').replace('/', '-')
 COUNTRIES = get_countries()
 
 
-def find(unique_ips: list):
+def get(unique_ips: list):
     """Updates lookup table with unique ips from ALPHA-2 to full country name"""
     logger: Logger = logging.getLogger(__name__)
     country_found = []
