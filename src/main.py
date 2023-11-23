@@ -28,19 +28,20 @@ root_logger.addHandler(fh)
 
 logger: Logger = logging.getLogger(__name__)
 
+TESTING: bool = False
 
 def process_logs():
 	log_entries: list = []
 	sources: list = []
-	with open('tests/test_tascsMay-2023-ISSUES') as logs:
+	with open('../input/tascsolutions_sslOct-2023') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
 			ip = ip.rstrip()
 
-			# skip parsing system cron jobs on server or activity from my home office
-			if ip == f'{my_secrets.bh_home_ip}' or ip == f'{my_secrets.home_ip}':
-				continue
+			# skip parsing system cron jobs on bluehost server or activity from my home office when not testing
+			if not TESTING and ip == f'{my_secrets.bh_home_ip}' or ip == f'{my_secrets.home_ip}':
+					continue
 
 			basic_info = basic.split("- - ")[1]
 			server_timestamp: str = basic_info.split(']')[0][1:]
@@ -60,7 +61,6 @@ def process_logs():
 				action_file = action_file1+action_file2+' *TRUNCATED*'
 				logger.warning(f"{ip} had too long requested file name, truncated")
 
-
 			try:
 				action2 = basic_info.split('"')[2].strip()
 				action_code, action_size = action2.split(' ')
@@ -68,7 +68,6 @@ def process_logs():
 			except ValueError as e:
 				logger.error(e, "Possible bot, check logs")
 				continue
-
 
 			agent_info = log.split('" "')[1]
 			agent_list = agent_info.split(' ')
