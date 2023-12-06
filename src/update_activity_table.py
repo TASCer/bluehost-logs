@@ -1,15 +1,12 @@
 import datetime as dt
-# import ipwhois
 import logging
-# import time
 
 from dateutil.parser import *
 from datetime import datetime
 from src import my_secrets
 from ipwhois.utils import get_countries
-# from ipwhois import IPWhois
 from logging import Logger
-from sqlalchemy.engine import Engine, CursorResult
+from sqlalchemy.engine import Engine
 from sqlalchemy import exc, create_engine, text
 from typing import Optional, Any
 
