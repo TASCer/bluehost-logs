@@ -4,7 +4,7 @@ import my_secrets
 import sqlalchemy as sa
 
 from logging import Logger
-from sqlalchemy import create_engine, exc, types, text, Column, Table, MetaData, ForeignKey
+from sqlalchemy import create_engine, exc, types, text, Column, Table, MetaData, ForeignKey, Index
 from sqlalchemy_utils import database_exists, create_database
 
 now = dt.datetime.now()
@@ -16,7 +16,7 @@ DB_NAME = f'{my_secrets.dbname}'
 DB_USER = f'{my_secrets.dbuser}'
 DB_PW = f'{my_secrets.dbpass}'
 # SQL TABLE constants
-ACTIVITY = 'activity'
+LOGS = 'logs'
 LOOKUP = 'lookup'
 
 
@@ -50,42 +50,50 @@ def tables():
 		logger.critical(str(e))
 		return False
 
-	activity_tbl_insp = sa.inspect(engine)
-	activity_tbl: bool = activity_tbl_insp.has_table(ACTIVITY, schema=f"{DB_NAME}")
+	logs_tbl_insp = sa.inspect(engine)
+	logs_tbl: bool = logs_tbl_insp.has_table(LOGS, schema=f"{DB_NAME}")
 	lookup_tbl_insp = sa.inspect(engine)
 	lookup_tbl: bool = lookup_tbl_insp.has_table(LOOKUP, schema=f"{DB_NAME}")
 
 	meta = MetaData()
 
-	if not activity_tbl:
+	if not logs_tbl:
 		try:
-			activity = Table(
-				ACTIVITY, meta,
-				Column('SOURCE', types.VARCHAR(15), primary_key=True),
-				Column('CLIENT_OS', types.VARCHAR(200), primary_key=True),
-				Column('AGENT', types.VARCHAR(100), primary_key=True),
-				Column('ACTION', types.VARCHAR(12), primary_key=True),
-				Column('FILE', types.VARCHAR(120), primary_key=True),
-				Column('TYPE', types.VARCHAR(20), primary_key=True),
-				Column('ACTION_CODE', types.VARCHAR(10), primary_key=True),
-				Column('ACTION_SIZE', types.VARCHAR(100), primary_key=True),
-				Column('REF_URL', types.VARCHAR(100), primary_key=True),
-				Column('REF_IP', types.VARCHAR(100), primary_key=True),
-				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True)
+			logs = Table(
+				LOGS, meta,
+				Column('id', types.Integer, primary_key=True, autoincrement=True),
+				Column('ACCESSED', types.TIMESTAMP(timezone=True), nullable=False),
+				Column('SOURCE', types.VARCHAR(15), ForeignKey("lookup.SOURCE"), nullable=False),
+				Column('CLIENT_OS', types.VARCHAR(200)),
+				Column('AGENT', types.VARCHAR(100)),
+				Column('ACTION', types.VARCHAR(12)),
+				Column('FILE', types.VARCHAR(120)),
+				Column('TYPE', types.VARCHAR(20)),
+				Column('ACTION_CODE', types.VARCHAR(10)),
+				Column('ACTION_SIZE', types.VARCHAR(100)),
+				Column('REF_URL', types.VARCHAR(100)),
+				Column('REF_IP', types.VARCHAR(100))
 			)
+			Index("accessed", logs.c.ACCESSED)
 
 		except (exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
 			logger.error(str(e))
 			return False
 
 	if not lookup_tbl:
+		try:
 
-		lookup = Table(
-			LOOKUP, meta,
-			Column('SOURCE', types.VARCHAR(15), primary_key=True),
-			Column('COUNTRY', types.VARCHAR(120)),
-			Column('DESCRIPTION', types.VARCHAR(200))
-		)
+			lookup = Table(
+				LOOKUP, meta,
+				Column('SOURCE', types.VARCHAR(15), primary_key=True),
+				Column('COUNTRY', types.VARCHAR(120)),
+				Column('DESCRIPTION', types.VARCHAR(200))
+			)
+
+		except (exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
+			logger.error(str(e))
+			return False
+
 	meta.create_all(engine)
 
 	return True
