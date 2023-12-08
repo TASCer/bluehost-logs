@@ -8,10 +8,13 @@ from ipwhois.utils import get_countries
 from logging import Logger
 from sqlalchemy.engine import Engine
 from sqlalchemy import exc, create_engine, text
-from typing import Optional, Any
 
 now: datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
+
+# SQL TABLE constants
+LOGS = 'logs'
+LOOKUP = 'lookup'
 
 COUNTRIES = get_countries()
 
@@ -41,6 +44,6 @@ def update(log_entries: list) -> object:
             ts_parsed = parse_timestamp(ts)
 
             try:
-                conn.execute(text(f'''INSERT IGNORE INTO `bluehost-logs`.`activity` VALUES('{ip}', '{client_os}', '{agent_name}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}', '{ts_parsed}');'''))
+                conn.execute(text(f'''INSERT IGNORE INTO logs VALUES('{id}', '{ts_parsed}', '{ip}', '{client_os}', '{agent_name}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}');'''))
             except (exc.SQLAlchemyError, exc.ProgrammingError, exc.DataError) as e:
                 logger.error(e)

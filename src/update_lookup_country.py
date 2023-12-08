@@ -14,6 +14,10 @@ from typing import Optional, Any
 now: datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
+# SQL TABLE constants
+LOGS = 'logs'
+LOOKUP = 'lookup'
+
 COUNTRIES = get_countries()
 
 
@@ -34,7 +38,7 @@ def get(unique_ips: list):
     with engine.connect() as conn, conn.begin():
             logger.info("Updating lookup table with source country name and description")
             try:
-                sql_no_country: CursorResult = conn.execute(text('''SELECT * from lookup WHERE COUNTRY = '' ;'''))
+                sql_no_country: CursorResult = conn.execute(text(f'''SELECT * from {LOOKUP} WHERE COUNTRY = '' ;'''))
                 no_country: list = [i for i in sql_no_country]
             except exc.SQLAlchemyError as e:
                 logger.warning(str(e))
@@ -71,7 +75,7 @@ def get(unique_ips: list):
                 else:
                     country_name: Optional[Any] = COUNTRIES.get(asn_alpha2)
 
-                conn.execute(text(f'''UPDATE `bluehost-logs`.`lookup`
+                conn.execute(text(f'''UPDATE `bluehost-weblogs`.`{LOOKUP}`
                             SET
                                 `COUNTRY` = '{country_name}',
                                 `DESCRIPTION` = '{asn_description}'

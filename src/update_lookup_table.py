@@ -10,6 +10,10 @@ from sqlalchemy import exc, create_engine, text
 now: datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
+# SQL TABLE constants
+LOGS = 'logs'
+LOOKUP = 'lookup'
+
 
 def update(unique_ips: list) -> object:
     """Takes in list of unique source ip addresses and ipdates lookup table to have country name added later"""
@@ -24,4 +28,4 @@ def update(unique_ips: list) -> object:
 
     with engine.connect() as conn, conn.begin():
         for ip in unique_ips:
-            ins_sql = conn.execute(text(f'''INSERT IGNORE into `bluehost-logs`.lookup values('{ip}', '', '');'''))
+            ins_sql = conn.execute(text(f'''INSERT IGNORE into lookup values('{ip}', '', '');'''))
