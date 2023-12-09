@@ -5,9 +5,9 @@ import logging
 import my_secrets
 import parse_logs
 import re
-import update_activity_table
+import inserts_activity_table
 import update_lookup_country
-import update_lookup_table
+import inserts_lookup_table
 
 # from collections import namedtuple
 from logging import Logger, Formatter
@@ -40,6 +40,6 @@ if __name__ == '__main__':
 	ips, processed_logs = parse_logs.process()
 	unique_sources: set = set(ips)
 	logger.info(f"HITS: {len(processed_logs)} Unique HITS: {len(unique_sources)}")
-	update_lookup_table.update(unique_sources)
+	inserts_lookup_table.update(unique_sources)
 	update_lookup_country.get(unique_sources)
-	update_activity_table.update(processed_logs)
+	inserts_activity_table.update(processed_logs)
