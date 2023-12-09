@@ -44,6 +44,6 @@ def update(log_entries: list) -> object:
             ts_parsed = parse_timestamp(ts)
 
             try:
-                conn.execute(text(f'''INSERT IGNORE INTO logs VALUES('{id}', '{ts_parsed}', '{ip}', '{client_os}', '{agent_name}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}');'''))
+                conn.execute(text(f'''INSERT IGNORE INTO {LOGS} VALUES('{id}', '{ts_parsed}', '{ip}', '{client_os}', '{agent_name}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}');'''))
             except (exc.SQLAlchemyError, exc.ProgrammingError, exc.DataError) as e:
                 logger.error(e)
