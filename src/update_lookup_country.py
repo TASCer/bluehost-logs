@@ -36,7 +36,7 @@ def get(unique_ips: list):
         exit()
 
     with engine.connect() as conn, conn.begin():
-            logger.info("Updating lookup table with source country name and description")
+            logger.info("Updating lookup table with source country name and description via IPWhois")
             try:
                 sql_no_country: CursorResult = conn.execute(text(f'''SELECT * from {LOOKUP} WHERE COUNTRY = '' ;'''))
                 no_country: list = [i for i in sql_no_country]
@@ -51,7 +51,6 @@ def get(unique_ips: list):
                     if not result['asn_description'] is None:
                         asn_description = result['asn_description']
                         asn_description = asn_description.split()[0].replace(',', '')
-                        print(asn_description)
                     else:
                         asn_description = asn_alpha2
                 except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
@@ -75,53 +74,10 @@ def get(unique_ips: list):
                 else:
                     country_name: Optional[Any] = COUNTRIES.get(asn_alpha2)
 
-                conn.execute(text(f'''UPDATE `bluehost-weblogs`.`{LOOKUP}`
+                conn.execute(text(f'''UPDATE `{my_secrets.dbname}`.`{LOOKUP}`
                             SET
                                 `COUNTRY` = '{country_name}',
                                 `DESCRIPTION` = '{asn_description}'
                             WHERE `SOURCE` = '{ip}';'''
                                   ))
-    logger.info("Lookup table updated")
-                            # return country_not_found
-        #     use iphois to update lookup with country name
-                # try:
-                #     obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
-                #     result: dict = obj.lookup_rdap()
-                #
-                # except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
-                #         ipwhois.ASNParseError, ipwhois.ASNOriginLookupError, ipwhois.ASNRegistryError,
-                #         ipwhois.HostLookupError, ipwhois.HTTPLookupError) as e:
-                #     result = None
-                #     error: str = str(e).split('http:')[0]
-                #     logger.error(f"{error} {ip}")
-
-            #         conn.execute(f'''update lookup SET country = '{error}' WHERE SOURCE = '{ip}';''')
-            #         continue
-            #
-                # asn_alpha2: str = result['asn_country_code']
-            #
-                # if asn_alpha2 is None or asn_alpha2 == '':
-                #     logger.warning(f"{ip} had no alpha2 code, setting country name to 'unknown'")
-                #     asn_alpha2: str = 'unknown'
-            #         conn.execute(f'''update lookup SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';''')
-            #         continue
-            #
-            #     elif asn_alpha2.islower():
-            #         asn_alpha2: str = asn_alpha2.upper()
-            #         logger.warning(f'RDAP responded with lowercase country for {ip}, should be upper')
-            #
-            #     else:
-            #         country_name: Optional[Any] = COUNTRIES.get(asn_alpha2)
-            #
-            #     if not country_name:
-            #         logger.warning("Country Name not found in COUNTRIES, setting it to alpha-2")
-            #         conn.execute(f'''update lookup SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';''')
-            #         continue
-            #
-            #     elif "'" in country_name:
-            #         country_name = country_name.replace("'", "''")
-            #         logger.warning(f"Apostrophe found in {country_name}")
-            # #         conn.execute(f'''update lookup SET country = '{country_name}' WHERE SOURCE = '{ip}';''')
-            #
-            #     else:
-            #         conn.execute(f'''update lookup SET country = '{country_name}' WHERE SOURCE = '{ip}';''')
+    logger.info(f"Lookup table updated {len(no_country)} with country names and ASN description")
