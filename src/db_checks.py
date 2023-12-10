@@ -64,7 +64,7 @@ def tables():
 				Column('id', types.Integer, primary_key=True, autoincrement=True),
 				Column('ACCESSED', types.TIMESTAMP(timezone=True), nullable=False),
 				Column('SOURCE', types.VARCHAR(15), ForeignKey("lookup.SOURCE"), nullable=False),
-				Column('CLIENT_OS', types.VARCHAR(200)),
+				Column('CLIENT', types.VARCHAR(200)),
 				Column('AGENT', types.VARCHAR(100)),
 				Column('ACTION', types.VARCHAR(12)),
 				Column('FILE', types.VARCHAR(120)),
@@ -76,7 +76,7 @@ def tables():
 			)
 			Index("accessed", logs.c.ACCESSED)
 
-		except (exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
+		except (AttributeError, exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
 			logger.error(str(e))
 			return False
 
@@ -89,8 +89,9 @@ def tables():
 				Column('COUNTRY', types.VARCHAR(120)),
 				Column('DESCRIPTION', types.VARCHAR(200))
 			)
+			Index("country", lookup.c.COUNTRY)
 
-		except (exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
+		except (AttributeError, exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
 			logger.error(str(e))
 			return False
 
