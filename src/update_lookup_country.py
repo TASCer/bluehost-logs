@@ -58,8 +58,7 @@ def get(unique_ips: list):
                         ipwhois.HostLookupError, ipwhois.HTTPLookupError) as e:
                     result = None
                     country = asn_alpha2
-                    error: str = str(e).split('http:')[0]
-                    logger.error(f"{error} {ip}")
+                    logger.error(f"{e}")
 
                 if asn_alpha2 is None or asn_alpha2 == '':
                     logger.warning(f"{ip} had no alpha2 code, setting country name to 'unknown'")
