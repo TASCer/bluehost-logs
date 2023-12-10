@@ -9,7 +9,7 @@ from ipwhois import IPWhois
 from logging import Logger
 from sqlalchemy.engine import Engine, CursorResult
 from sqlalchemy import exc, create_engine, text
-from typing import Optional, Any
+from typing import Optional
 
 now: datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
@@ -37,6 +37,7 @@ def get(unique_ips: list):
 
     with engine.connect() as conn, conn.begin():
             logger.info("Updating lookup table with source country name and description via IPWhois")
+
             try:
                 sql_no_country: CursorResult = conn.execute(text(f'''SELECT * from {LOOKUP} WHERE COUNTRY = '' ;'''))
                 no_country: list = [i for i in sql_no_country]
@@ -47,31 +48,32 @@ def get(unique_ips: list):
                 try:
                     obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
                     result: dict = obj.lookup_rdap()
-                    asn_alpha2: str = result['asn_country_code']
-                    if not result['asn_description'] is None:
-                        asn_description = result['asn_description']
-                        asn_description = asn_description.split()[0].replace(',', '')
-                    else:
-                        asn_description = asn_alpha2
+
                 except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
                         ipwhois.ASNParseError, ipwhois.ASNOriginLookupError, ipwhois.ASNRegistryError,
                         ipwhois.HostLookupError, ipwhois.HTTPLookupError) as e:
-                    result = None
-                    country = asn_alpha2
-                    logger.error(f"{e}")
+                    logger.error(f'{e}')
+                    continue
 
-                if asn_alpha2 is None or asn_alpha2 == '':
+                if not result['asn_description'] is None:
+                    asn_description = result['asn_description']
+                    asn_description = asn_description.split()[0].replace(',', '')
+                else:
+                    asn_description = asn_alpha2
+
+                if result['asn_country_code'] is None:
                     logger.warning(f"{ip} had no alpha2 code, setting country name to 'unknown'")
                     asn_alpha2: str = 'unknown'
                     conn.execute(f'''update lookup SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';''')
                     continue
 
-                elif asn_alpha2.islower():
+                elif result['asn_country_code'].islower():
                     asn_alpha2: str = asn_alpha2.upper()
                     logger.warning(f'RDAP responded with lowercase country for {ip}, should be upper')
 
                 else:
-                    country_name: Optional[Any] = COUNTRIES.get(asn_alpha2)
+                    asn_alpha2 = result['asn_country_code']
+                    country_name: Optional[str] = COUNTRIES.get(asn_alpha2)
 
                 conn.execute(text(f'''UPDATE `{my_secrets.dbname}`.`{LOOKUP}`
                             SET
