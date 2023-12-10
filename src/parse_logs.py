@@ -7,19 +7,21 @@ from logging import Logger
 
 logger: Logger = logging.getLogger(__name__)
 
+WEBLOG_FILE: str = "../tests/test_tascsMay-2023-ISSUES"
+
 
 def process():
 	log_entries: list = []
 	sources: list = []
-	with open('../input/hoa.tascs.net-ssl_log-Dec-2023') as logs:
+	with open(f'{WEBLOG_FILE}') as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
 			ip = ip.rstrip()
 
 			# skip parsing system cron jobs on bluehost server or activity from my home office when not testing
-			# if ip == f'{my_secrets.bh_ip}' or ip == f'{my_secrets.home_ip}':
-			# 		continue
+			if ip == f'{my_secrets.bh_ip}' or ip == f'{my_secrets.home_ip}':
+				continue
 
 			basic_info = basic.split("- - ")[1]
 			server_timestamp: str = basic_info.split(']')[0][1:]
@@ -44,7 +46,7 @@ def process():
 				action_code, action_size = action2.split(' ')
 
 			except ValueError as e:
-				logger.error(e, "Possible bot, check logs")
+				logger.error("Possible bot, check logs")
 				continue
 
 			agent_info = log.split('" "')[1]
