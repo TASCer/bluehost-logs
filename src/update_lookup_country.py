@@ -39,12 +39,12 @@ def get(unique_ips: list):
             logger.info("Updating lookup table with source country name and description via IPWhois")
 
             try:
-                sql_no_country: CursorResult = conn.execute(text(f'''SELECT * from {LOOKUP} WHERE COUNTRY = '' ;'''))
+                sql_no_country: CursorResult = conn.execute(text(f'''SELECT * from {LOOKUP} WHERE COUNTRY = '' or COUNTRY is null;'''))
                 no_country: list = [i for i in sql_no_country]
             except exc.SQLAlchemyError as e:
                 logger.warning(str(e))
 
-            for ip, country, desc in no_country:
+            for ip, country, code, desc in no_country:
                 try:
                     obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
                     result: dict = obj.lookup_rdap()
@@ -55,15 +55,16 @@ def get(unique_ips: list):
                     logger.error(f'{e}')
                     continue
 
-                if not result['asn_description'] is None:
-                    asn_description = result['asn_description']
-                    asn_description = asn_description.split()[0].replace(',', '')
+                asn_description: str = result['asn_description']
+
+                if asn_description == "NA" or asn_description is None:
+                    asn_description = "NA"
                 else:
-                    asn_description = asn_alpha2
+                    asn_description = asn_description.rsplit(',')[0]
 
                 if result['asn_country_code'] is None:
                     logger.warning(f"{ip} had no alpha2 code, setting country name to 'unknown'")
-                    asn_alpha2: str = 'unknown'
+                    asn_alpha2: str = '00'
                     conn.execute(f'''update lookup SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';''')
                     continue
 
@@ -75,10 +76,15 @@ def get(unique_ips: list):
                     asn_alpha2 = result['asn_country_code']
                     country_name: Optional[str] = COUNTRIES.get(asn_alpha2)
 
-                conn.execute(text(f'''UPDATE `{my_secrets.dbname}`.`{LOOKUP}`
+                try:
+                    conn.execute(text(f'''UPDATE `{my_secrets.dbname}`.`{LOOKUP}`
                             SET
                                 `COUNTRY` = '{country_name}',
+                                `ALPHA2` = '{asn_alpha2}',
                                 `DESCRIPTION` = '{asn_description}'
                             WHERE `SOURCE` = '{ip}';'''
                                   ))
+                except exc.ProgrammingError as e:
+                    logger.error(e)
+
     logger.info(f"Lookup table updated {len(no_country)} with country names and ASN description")

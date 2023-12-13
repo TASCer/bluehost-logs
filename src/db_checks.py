@@ -86,8 +86,9 @@ def tables():
 			lookup = Table(
 				LOOKUP, meta,
 				Column('SOURCE', types.VARCHAR(15), primary_key=True),
-				Column('COUNTRY', types.VARCHAR(120)),
-				Column('DESCRIPTION', types.VARCHAR(200))
+				Column('COUNTRY', types.VARCHAR(100)),
+				Column('ALPHA2', types.VARCHAR(2)),
+				Column('DESCRIPTION', types.VARCHAR(160))
 			)
 			Index("country", lookup.c.COUNTRY)
 
