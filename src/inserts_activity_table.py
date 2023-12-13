@@ -47,3 +47,5 @@ def update(log_entries: list) -> object:
                 conn.execute(text(f'''INSERT IGNORE INTO {LOGS} VALUES('{id}', '{ts_parsed}', '{ip}', '{client}', '{agent_name}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}');'''))
             except (exc.SQLAlchemyError, exc.ProgrammingError, exc.DataError) as e:
                 logger.error(e)
+
+    logger.info(f"{len(log_entries)} entries added to {LOGS} table")
