@@ -5,3 +5,4 @@
 /.idea/*
 /*.log
 /_old_logs/*
+/.env
