@@ -4,7 +4,7 @@ from src import my_secrets
 
 from datetime import datetime
 from logging import Logger
-from sqlalchemy.engine import Engine, CursorResult
+from sqlalchemy.engine import Engine
 from sqlalchemy import exc, create_engine, text
 
 now: datetime = dt.datetime.now()
@@ -28,4 +28,4 @@ def update(unique_ips: list) -> object:
 
     with engine.connect() as conn, conn.begin():
         for ip in unique_ips:
-            ins_sql = conn.execute(text(f'''INSERT IGNORE into lookup values('{ip}', '', '');'''))
+            ins_sql: str = conn.execute(text(f'''INSERT IGNORE into lookup values('{ip}', '', '', '');'''))
