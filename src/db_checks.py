@@ -69,8 +69,8 @@ def tables():
 				Column('ACTION', types.VARCHAR(12)),
 				Column('FILE', types.VARCHAR(120)),
 				Column('TYPE', types.VARCHAR(20)),
-				Column('ACTION_CODE', types.VARCHAR(10)),
-				Column('ACTION_SIZE', types.VARCHAR(100)),
+				Column('CODE', types.VARCHAR(10)),
+				Column('SIZE', types.VARCHAR(100)),
 				Column('REF_URL', types.VARCHAR(100)),
 				Column('REF_IP', types.VARCHAR(100))
 			)
