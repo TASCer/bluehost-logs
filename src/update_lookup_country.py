@@ -22,10 +22,10 @@ COUNTRIES = get_countries()
 
 
 def get(unique_ips: list):
-    """Updates lookup table with unique ips from ALPHA-2 to full country name"""
+    """Updates lookup table SOURCE entries with full country name and ASN Description"""
     logger: Logger = logging.getLogger(__name__)
-    country_found = []
-    country_not_found = []
+    country_found: list = []
+    country_not_found: list = []
 
     try:
         engine: Engine = create_engine(f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
@@ -65,7 +65,7 @@ def get(unique_ips: list):
                 if result['asn_country_code'] is None:
                     logger.warning(f"{ip} had no alpha2 code, setting country name to 'unknown'")
                     asn_alpha2: str = '00'
-                    conn.execute(f'''update lookup SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';''')
+                    conn.execute(text(f'''update lookup SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';'''))
                     continue
 
                 elif result['asn_country_code'].islower():
