@@ -7,8 +7,6 @@ from logging import Logger
 from typing import NamedTuple
 logger: Logger = logging.getLogger(__name__)
 
-WEBLOG_FILE: str = "../tests/test_hoa_sslOct-2023"
-
 
 class LogEntry(NamedTuple):
 	server_timestamp: str
@@ -24,10 +22,10 @@ class LogEntry(NamedTuple):
 	REF_IP: str
 
 
-def process():
+def process(file: str):
 	log_entries: list = []
 	sources: list = []
-	with open(f'{WEBLOG_FILE}') as logs:
+	with open(file) as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
@@ -38,7 +36,7 @@ def process():
 				continue
 
 			basic_info = basic.split("- - ")[1]
-			server_timestamp: str = basic_info.split(']')[0][1:]
+			server_timestamp = basic_info.split(']')[0][1:]
 
 			try:
 				action1 = basic_info.split('"')[1]

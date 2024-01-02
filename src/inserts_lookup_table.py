@@ -16,7 +16,8 @@ LOOKUP = 'lookup'
 
 
 def update(unique_ips: list) -> object:
-    """Takes in list of unique source ip addresses and ipdates lookup table to have country name added later"""
+    """Takes in list of unique source ip addresses and updates lookup table
+        to have country name and descryption added later"""
     logger: Logger = logging.getLogger(__name__)
     try:
         engine: Engine = create_engine(f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
