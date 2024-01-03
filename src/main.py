@@ -1,6 +1,7 @@
-# TODO THINGS SEEM TO WORK, DO MORE TESTING and fully populate lookup country, create db backups. Start fresh in 2024
+# TODO create db backups. Start fresh in 2024
 import datetime as dt
 import db_checks
+import get_logfiles
 import logging
 import my_secrets
 import parse_logs
@@ -28,6 +29,17 @@ root_logger.addHandler(fh)
 
 logger: Logger = logging.getLogger(__name__)
 
+WEBLOG_FILE: str = "../input/roadspies.cag.bis.mybluehost.me-ssl_log-Dec-2023"
+
+
+logger: Logger = logging.getLogger(__name__)
+
+tascs_log_path = my_secrets.tascs
+hoa_logs_path = my_secrets.hoa
+roadspies_log_path = my_secrets.roadspies
+
+log_file_paths = [roadspies_log_path]  # tascs_log_path, hoa_logs_path,
+
 
 if __name__ == '__main__':
 	logger.info("Checking RDBMS Availability")
@@ -37,8 +49,9 @@ if __name__ == '__main__':
 		logger.info("RDBMS is available and ready")
 	else:
 		logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
-	ips, processed_logs = parse_logs.process()
-	unique_sources: set = set(ips)
-	inserts_lookup_table.update(unique_sources)
-	update_lookup_country.get(unique_sources)
-	inserts_activity_table.update(processed_logs)
+	get_logfiles.secure_copy(log_file_paths)
+	# ips, processed_logs = parse_logs.process(WEBLOG_FILE)
+	# unique_sources: set = set(ips)
+	# inserts_lookup_table.update(unique_sources)
+	# update_lookup_country.get(unique_sources)
+	# inserts_activity_table.update(processed_logs)
