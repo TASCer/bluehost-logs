@@ -17,7 +17,7 @@ DB_USER = f'{my_secrets.dbuser}'
 DB_PW = f'{my_secrets.dbpass}'
 # SQL TABLE constants
 LOGS = 'logs'
-LOOKUP = 'lookup'
+SOURCES = 'sources'
 
 
 def schema():
@@ -52,8 +52,8 @@ def tables():
 
 	logs_tbl_insp = sa.inspect(engine)
 	logs_tbl: bool = logs_tbl_insp.has_table(LOGS, schema=f"{DB_NAME}")
-	lookup_tbl_insp = sa.inspect(engine)
-	lookup_tbl: bool = lookup_tbl_insp.has_table(LOOKUP, schema=f"{DB_NAME}")
+	sources_tbl_insp = sa.inspect(engine)
+	sources_tbl: bool = sources_tbl_insp.has_table(SOURCES, schema=f"{DB_NAME}")
 
 	meta = MetaData()
 
@@ -61,18 +61,18 @@ def tables():
 		try:
 			logs = Table(
 				LOGS, meta,
-				Column('id', types.Integer, primary_key=True, autoincrement=True),
-				Column('ACCESSED', types.TIMESTAMP(timezone=True), nullable=False),
+				# Column('id', types.Integer, primary_key=True, autoincrement=True),
+				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True, nullable=False),
 				Column('SOURCE', types.VARCHAR(15), ForeignKey("lookup.SOURCE"), nullable=False),
-				Column('CLIENT', types.VARCHAR(200)),
-				Column('AGENT', types.VARCHAR(100)),
-				Column('ACTION', types.VARCHAR(12)),
-				Column('FILE', types.VARCHAR(120)),
-				Column('TYPE', types.VARCHAR(20)),
-				Column('CODE', types.VARCHAR(10)),
-				Column('SIZE', types.VARCHAR(100)),
-				Column('REF_URL', types.VARCHAR(100)),
-				Column('REF_IP', types.VARCHAR(100))
+				Column('CLIENT', types.VARCHAR(200), primary_key=True, nullable=False),
+				Column('AGENT', types.VARCHAR(100),primary_key=True, nullable=False),
+				Column('ACTION', types.VARCHAR(12),primary_key=True, nullable=False),
+				Column('FILE', types.VARCHAR(120),primary_key=True, nullable=False),
+				Column('TYPE', types.VARCHAR(20),primary_key=True, nullable=False),
+				Column('CODE', types.VARCHAR(10),primary_key=True, nullable=False),
+				Column('SIZE', types.VARCHAR(100),primary_key=True, nullable=False),
+				Column('REF_URL', types.VARCHAR(100),primary_key=True, nullable=False),
+				Column('REF_IP', types.VARCHAR(100),primary_key=True, nullable=False)
 			)
 			Index("accessed", logs.c.ACCESSED)
 
@@ -80,17 +80,17 @@ def tables():
 			logger.error(str(e))
 			return False
 
-	if not lookup_tbl:
+	if not sources_tbl:
 		try:
 
-			lookup = Table(
-				LOOKUP, meta,
+			sources = Table(
+				SOURCES, meta,
 				Column('SOURCE', types.VARCHAR(15), primary_key=True),
 				Column('COUNTRY', types.VARCHAR(100)),
 				Column('ALPHA2', types.VARCHAR(2)),
 				Column('DESCRIPTION', types.VARCHAR(160))
 			)
-			Index("country", lookup.c.COUNTRY)
+			Index("country", sources.c.COUNTRY)
 
 		except (AttributeError, exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
 			logger.error(str(e))
