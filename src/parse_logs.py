@@ -22,10 +22,10 @@ class LogEntry(NamedTuple):
 	REF_IP: str
 
 
-def process(file: str):
+def process(log_path: str):
 	log_entries: list = []
 	sources: list = []
-	with open(file) as logs:
+	with open(log_path) as logs:
 		for log in logs:
 			basic = log.split('" "')[0]
 			ip = basic.split("- - ")[0]
