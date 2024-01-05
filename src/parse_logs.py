@@ -2,7 +2,6 @@ import logging
 import my_secrets
 import re
 
-from collections import namedtuple
 from logging import Logger
 from typing import NamedTuple
 logger: Logger = logging.getLogger(__name__)
@@ -90,5 +89,7 @@ def process(log_path: str):
 			sources.append(SOURCE)
 			entry = LogEntry(SOURCE, server_timestamp, ACTION, FILE, TYPE, REF_URL, REF_IP, RES_CODE, SIZE, AGENT, CLIENT)
 			log_entries.append(entry)
+
+	logger.info(f"{len(log_entries)} processed with {len(set(sources))} unique for {log_path}")
 
 	return sources, log_entries
