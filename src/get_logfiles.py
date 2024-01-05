@@ -13,6 +13,7 @@ logger: Logger = logging.getLogger(__name__)
 now: datetime = dt.datetime.now()
 
 
+
 def secure_copy(paths: list[str], *args) -> None:
 	"""
 	Takes in a list of paths for location of website log files
@@ -27,7 +28,6 @@ def secure_copy(paths: list[str], *args) -> None:
 		month_num, year = args
 		dt_string = f"{year}-{month_num}-01"
 		dt_obj = dt.datetime.strptime(dt_string, '%Y-%m-%d')
-		print(dt_obj)
 		month_name = dt_obj.strftime('%b')
 		year = str(year)
 
@@ -37,7 +37,6 @@ def secure_copy(paths: list[str], *args) -> None:
 		year = str(now.year)
 
 	for path in paths:
-		print(month_name, year)
 		remote_zipped_filename = path+month_name+'-'+year+'.gz'
 
 		local_zipped_filename = path + month_name + '-' + year
@@ -53,11 +52,15 @@ def secure_copy(paths: list[str], *args) -> None:
 				logger.critical(f"{path} LOG NOT RETRIEVED. Investigate")
 
 		else:
+			# Pageant launch and run test
+			# try:
+			# 	os.system('pageant --encrypted c:\\Users\\todd\\Desktop\\myBH-SSH-KEY.ppk -c pscp {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}')
+			# except(BaseException, FileNotFoundError) as e:
+			# 	logger.critical(f"Pageant - {e}")
 			try:
 				os.system(f'pscp {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}')
-
 			except (BaseException, FileNotFoundError) as e:
-				logger.critical(f"{e}")
+				logger.critical(f"pcsp - {e}")
 
 		# Unzip file save to unzipped
 		try:
