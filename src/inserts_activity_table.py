@@ -14,7 +14,7 @@ todays_date: str = now.strftime('%D').replace('/', '-')
 
 # SQL TABLE constants
 LOGS = 'logs'
-LOOKUP = 'lookup'
+SOURCES = 'sources'
 
 COUNTRIES = get_countries()
 

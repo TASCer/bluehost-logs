@@ -63,7 +63,7 @@ def tables():
 				LOGS, meta,
 				# Column('id', types.Integer, primary_key=True, autoincrement=True),
 				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True, nullable=False),
-				Column('SOURCE', types.VARCHAR(15), ForeignKey("lookup.SOURCE"), nullable=False),
+				Column('SOURCE', types.VARCHAR(15), ForeignKey("sources.SOURCE"), nullable=False),
 				Column('CLIENT', types.VARCHAR(200), primary_key=True, nullable=False),
 				Column('AGENT', types.VARCHAR(100),primary_key=True, nullable=False),
 				Column('ACTION', types.VARCHAR(12),primary_key=True, nullable=False),

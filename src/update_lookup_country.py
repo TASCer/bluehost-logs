@@ -16,7 +16,7 @@ todays_date: str = now.strftime('%D').replace('/', '-')
 
 # SQL TABLE constants
 LOGS = 'logs'
-LOOKUP = 'lookup'
+SOURCES = 'sources'
 
 COUNTRIES = get_countries()
 
@@ -39,7 +39,7 @@ def get(unique_ips: list):
             logger.info("Updating lookup table with source country name and description via IPWhois")
 
             try:
-                sql_no_country: CursorResult = conn.execute(text(f'''SELECT * from {LOOKUP} WHERE COUNTRY = '' or COUNTRY is null;'''))
+                sql_no_country: CursorResult = conn.execute(text(f'''SELECT * from {SOURCES} WHERE COUNTRY = '' or COUNTRY is null;'''))
                 no_country: list = [i for i in sql_no_country]
             except exc.SQLAlchemyError as e:
                 logger.warning(str(e))
@@ -77,7 +77,7 @@ def get(unique_ips: list):
                     country_name: Optional[str] = COUNTRIES.get(asn_alpha2)
 
                 try:
-                    conn.execute(text(f'''UPDATE `{my_secrets.dbname}`.`{LOOKUP}`
+                    conn.execute(text(f'''UPDATE `{my_secrets.dbname}`.`{SOURCES}`
                             SET
                                 `COUNTRY` = '{country_name}',
                                 `ALPHA2` = '{asn_alpha2}',

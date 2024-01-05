@@ -12,7 +12,7 @@ todays_date: str = now.strftime('%D').replace('/', '-')
 
 # SQL TABLE constants
 LOGS = 'logs'
-LOOKUP = 'lookup'
+SOURCES = 'sources'
 
 
 def update(unique_ips: list) -> object:
@@ -29,4 +29,4 @@ def update(unique_ips: list) -> object:
 
     with engine.connect() as conn, conn.begin():
         for ip in unique_ips:
-            ins_sql: str = conn.execute(text(f'''INSERT IGNORE into lookup values('{ip}', '', '', '');'''))
+            ins_sql: str = conn.execute(text(f'''INSERT IGNORE into {SOURCES} values('{ip}', '', '', '');'''))
