@@ -92,6 +92,6 @@ def process(log_paths: set):
 				entry = LogEntry(SOURCE, server_timestamp, ACTION, FILE, TYPE, REF_URL, REF_IP, RES_CODE, SIZE, AGENT, CLIENT)
 				log_entries.append(entry)
 
-		logger.info(f"{len(log_entries)} processed with {len(set(sources))} unique for {log_paths}")
+		logger.info(f"{log_entries.count(LogEntry)} logs processed with {len(set(sources))} unique for {log_paths}")
 
 		return sources, log_entries
