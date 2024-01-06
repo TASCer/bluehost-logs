@@ -14,7 +14,7 @@ now: datetime = dt.datetime.now()
 
 
 
-def secure_copy(paths: list[str], *args) -> None:
+def secure_copy(paths: list[str], *args) -> set:
 	"""
 	Takes in a list of paths for location of website log files
 	If historical
@@ -23,7 +23,7 @@ def secure_copy(paths: list[str], *args) -> None:
 	param: year
 	"""
 	month_num, year = args
-
+	unzipped_paths = set()
 	if not None in args:
 		month_num, year = args
 		dt_string = f"{year}-{month_num}-01"
@@ -70,4 +70,6 @@ def secure_copy(paths: list[str], *args) -> None:
 		except (BaseException, FileNotFoundError) as e:
 			logger.critical(f"{e}")
 
-	return f"{my_secrets.local_unzipped_path}{local_unzipped_filename}"
+		unzipped_paths.add(f"{my_secrets.local_unzipped_path}{local_unzipped_filename}")
+
+	return unzipped_paths

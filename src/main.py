@@ -32,7 +32,7 @@ hoa_logs_path = my_secrets.hoa_logs_zipped
 roadspies_logs_path = my_secrets.roadspies_logs_zipped
 tascs_logs_historical_path = my_secrets.tascs_logs_historical_zipped
 
-remote_log_file_paths = [roadspies_logs_path] # roadspies_logs_path, tascs_logs_historical_path, tascs_logs_path, hoa_logs_path]
+remote_log_file_paths = [roadspies_logs_path, tascs_logs_path, hoa_logs_path] # roadspies_logs_path, tascs_logs_historical_path, tascs_logs_path, hoa_logs_path
 
 
 if __name__ == '__main__':
@@ -41,11 +41,13 @@ if __name__ == '__main__':
 	year: str = None
 	have_database: bool = db_checks.schema()
 	have_tables: bool = db_checks.tables()
+
 	if have_database and have_tables:
 		logger.info("RDBMS is available and ready")
 	else:
 		logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
-	processed_log_path = get_logfiles.secure_copy(remote_log_file_paths, month_num, year)
+
+	processed_log_path: list[str] = get_logfiles.secure_copy(remote_log_file_paths, month_num, year)
 	ips, processed_logs = parse_logs.process(processed_log_path)
 	unique_sources: set = set(ips)
 	inserts_lookup_table.update(unique_sources)
