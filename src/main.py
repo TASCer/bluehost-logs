@@ -5,9 +5,9 @@ import get_logfiles
 import logging
 import my_secrets
 import parse_logs
-import inserts_activity_table
-import update_lookup_country
-import inserts_lookup_table
+import insert_activity
+import update_sources_country
+import insert_unique_sources
 
 from logging import Logger, Formatter
 
@@ -32,8 +32,8 @@ hoa_logs_path = my_secrets.hoa_logs_zipped
 roadspies_logs_path = my_secrets.roadspies_logs_zipped
 tascs_logs_historical_path = my_secrets.tascs_logs_historical_zipped
 
-remote_log_file_paths = [roadspies_logs_path, tascs_logs_path, hoa_logs_path] # roadspies_logs_path, tascs_logs_historical_path, tascs_logs_path, hoa_logs_path
-
+remote_log_file_paths = [roadspies_logs_path, tascs_logs_path, hoa_logs_path]
+# historical_remote_log_file_paths = [tascs_logs_historical_path}
 
 if __name__ == '__main__':
 	logger.info("Checking RDBMS Availability")
@@ -50,6 +50,6 @@ if __name__ == '__main__':
 	processed_log_path: list[str] = get_logfiles.secure_copy(remote_log_file_paths, month_num, year)
 	ips, processed_logs = parse_logs.process(processed_log_path)
 	unique_sources: set = set(ips)
-	inserts_lookup_table.update(unique_sources)
-	update_lookup_country.get(unique_sources)
-	inserts_activity_table.update(processed_logs)
+	insert_unique_sources.update(unique_sources)
+	update_sources_country.get(unique_sources)
+	insert_activity.update(processed_logs)
