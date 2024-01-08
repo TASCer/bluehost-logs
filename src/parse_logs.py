@@ -4,6 +4,7 @@ import re
 
 from logging import Logger
 from typing import NamedTuple
+
 logger: Logger = logging.getLogger(__name__)
 
 
@@ -48,11 +49,18 @@ def process(log_paths: set):
 					continue
 
 				if len(FILE) >= 120:
-					action_list = FILE.split('?')
-					action_file1 = action_list[0]
-					action_file2 = action_list[1][:80]
+					try:
+						action_list = FILE.split('?')
+						action_file1 = action_list[0]
+						action_file2 = action_list[1][:80]
+					except IndexError:
+						try:
+							action_list = FILE.split('+')
+						except IndexError as e:
+							logger.error(e)
+
 					FILE = action_file1+action_file2+' *TRUNCATED*'
-					logger.warning(f"{SOURCE} had too long requested file name, truncated")
+					logger.warning(f"\t\t{SOURCE} had too long requested file name, truncated")
 
 				try:
 					action2 = basic_info.split('"')[2].strip()
@@ -92,6 +100,6 @@ def process(log_paths: set):
 				entry = LogEntry(SOURCE, server_timestamp, ACTION, FILE, TYPE, REF_URL, REF_IP, RES_CODE, SIZE, AGENT, CLIENT)
 				log_entries.append(entry)
 
-		logger.info(f"{log_entries.count(LogEntry)} logs processed with {len(set(sources))} unique for {log_paths}")
+	logger.info(f"{log_entries.count(LogEntry)} logs processed with {len(set(sources))} unique for {log_paths}")
 
-		return sources, log_entries
+	return sources, log_entries
