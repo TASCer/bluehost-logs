@@ -63,9 +63,9 @@ def get(unique_ips: list):
                     asn_description = asn_description.rsplit(',')[0]
 
                 if result['asn_country_code'] is None:
-                    logger.warning(f"{ip} had no alpha2 code, setting country name to 'unknown'")
+                    logger.warning(f"{ip} had no alpha2 code, setting country name to '00'")
                     asn_alpha2: str = '00'
-                    conn.execute(text(f'''update lookup SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';'''))
+                    conn.execute(text(f'''update {SOURCES} SET country = '{asn_alpha2}' WHERE SOURCE = '{ip}';'''))
                     continue
 
                 elif result['asn_country_code'].islower():
