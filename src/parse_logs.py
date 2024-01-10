@@ -23,11 +23,13 @@ class LogEntry(NamedTuple):
 
 
 def process(log_paths: set):
-	log_entries: list = []
-	sources: list = []
+	all_log_entries = []
+	all_sources = []
 	for p in log_paths:
 		logger.info(f"Processing: {p}")
 		with open(p) as logs:
+			site_log_entries: int = 0
+			site_sources: int = 0
 			for log in logs:
 				basic = log.split('" "')[0]
 				ip = basic.split("- - ")[0]
@@ -56,6 +58,9 @@ def process(log_paths: set):
 					except IndexError:
 						try:
 							action_list = FILE.split('+')
+							action_file1 = action_list[0]
+							action_file2 = ''
+
 						except IndexError as e:
 							logger.error(e)
 
@@ -96,10 +101,11 @@ def process(log_paths: set):
 					CLIENT = client_os.replace(';', '')
 					client_format = client[1]
 
-				sources.append(SOURCE)
+				site_sources += 1
+				all_sources.append(SOURCE)
 				entry = LogEntry(SOURCE, server_timestamp, ACTION, FILE, TYPE, REF_URL, REF_IP, RES_CODE, SIZE, AGENT, CLIENT)
-				log_entries.append(entry)
+				site_log_entries += 1
+				all_log_entries.append(entry)
+			logger.info(f"\t\t{site_log_entries} logs processed with {site_sources} unique")
 
-	logger.info(f"{log_entries.count(LogEntry)} logs processed with {len(set(sources))} unique for {log_paths}")
-
-	return sources, log_entries
+	return all_sources, all_log_entries
