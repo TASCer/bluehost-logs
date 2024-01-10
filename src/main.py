@@ -32,7 +32,7 @@ hoa_logs_path = my_secrets.hoa_logs_zipped
 roadspies_logs_path = my_secrets.roadspies_logs_zipped
 tascs_logs_historical_path = my_secrets.tascs_logs_historical_zipped
 
-remote_log_file_paths = [tascs_logs_path, hoa_logs_path, roadspies_logs_path]
+remote_log_file_paths = [tascs_logs_path, roadspies_logs_path, hoa_logs_path]
 # historical_remote_log_file_paths = [tascs_logs_historical_path}
 
 if __name__ == '__main__':
