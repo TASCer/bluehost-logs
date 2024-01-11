@@ -32,7 +32,7 @@ hoa_logs_path = my_secrets.hoa_logs_zipped
 roadspies_logs_path = my_secrets.roadspies_logs_zipped
 tascs_logs_historical_path = my_secrets.tascs_logs_historical_zipped
 
-remote_log_file_paths = [tascs_logs_path, roadspies_logs_path, hoa_logs_path]
+remote_log_file_paths = [hoa_logs_path]
 # historical_remote_log_file_paths = [tascs_logs_historical_path}
 
 if __name__ == '__main__':
@@ -49,9 +49,9 @@ if __name__ == '__main__':
 
 	logger.info("***** STARTING LOG PROCESSING *****")
 	processed_log_path: list[str] = get_logfiles.secure_copy(remote_log_file_paths, month_num, year)
-	ips, processed_logs = parse_logs.process(processed_log_path)
+	ips, processed_logs, my_processed_logs = parse_logs.process(processed_log_path)
 	unique_sources: set = set(ips)
 	insert_unique_sources.update(unique_sources)
 	update_sources_country.get(unique_sources)
-	insert_activity.update(processed_logs)
+	insert_activity.update(processed_logs, my_processed_logs)
 	logger.info("***** COMPLETED WEB LOG PROCESSING *****")

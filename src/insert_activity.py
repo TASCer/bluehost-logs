@@ -15,7 +15,7 @@ todays_date: str = now.strftime('%D').replace('/', '-')
 # SQL TABLE constants
 LOGS = 'logs'
 SOURCES = 'sources'
-
+MY_LOGS = 'my_logs'
 COUNTRIES = get_countries()
 
 
@@ -28,7 +28,7 @@ def parse_timestamp(ts: str) -> datetime:
     return ts_parsed
 
 
-def update(log_entries: list) -> object:
+def update(log_entries: list, my_log_entries: list) -> object:
     """Updates lookup table with unique ips from ALPHA-2 to full country name"""
     logger: Logger = logging.getLogger(__name__)
     try:
@@ -49,3 +49,12 @@ def update(log_entries: list) -> object:
                 logger.error(e)
 
     logger.info(f"{len(log_entries)} entries added to {LOGS} table")
+
+    with engine.connect() as conn, conn.begin():
+        for ip, ts, action, file, conn_type, ref_url, ref_ip, action_code, action_size, agent_name, client in my_log_entries:
+            ts_parsed = parse_timestamp(ts)
+
+            try:
+                conn.execute(text(f'''INSERT IGNORE INTO {MY_LOGS} VALUES('{ts_parsed}', '{ip}', '{client}', '{agent_name}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}');'''))
+            except (exc.SQLAlchemyError, exc.ProgrammingError, exc.DataError) as e:
+                logger.error(e)

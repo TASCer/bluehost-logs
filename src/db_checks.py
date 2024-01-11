@@ -18,7 +18,7 @@ DB_PW = f'{my_secrets.dbpass}'
 # SQL TABLE constants
 LOGS = 'logs'
 SOURCES = 'sources'
-
+MY_LOGS = 'my_logs'
 
 def schema():
 	"""Check to see if schema/DB_NAME is present, if not, create"""
@@ -52,6 +52,7 @@ def tables():
 
 	logs_tbl_insp = sa.inspect(engine)
 	logs_tbl: bool = logs_tbl_insp.has_table(LOGS, schema=f"{DB_NAME}")
+	my_logs_tbl: bool = logs_tbl_insp.has_table(MY_LOGS, schema=f"{DB_NAME}")
 	sources_tbl_insp = sa.inspect(engine)
 	sources_tbl: bool = sources_tbl_insp.has_table(SOURCES, schema=f"{DB_NAME}")
 
@@ -75,6 +76,29 @@ def tables():
 				Column('REF_IP', types.VARCHAR(100),primary_key=True, nullable=False)
 			)
 			Index("accessed", logs.c.ACCESSED)
+
+		except (AttributeError, exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
+			logger.error(str(e))
+			return False
+
+	if not my_logs_tbl:
+		try:
+			my_logs = Table(
+				MY_LOGS, meta,
+				# Column('id', types.Integer, primary_key=True, autoincrement=True),
+				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True, nullable=False),
+				Column('SOURCE', types.VARCHAR(15), ForeignKey("sources.SOURCE"), nullable=False),
+				Column('CLIENT', types.VARCHAR(200), primary_key=True, nullable=False),
+				Column('AGENT', types.VARCHAR(100),primary_key=True, nullable=False),
+				Column('ACTION', types.VARCHAR(12),primary_key=True, nullable=False),
+				Column('FILE', types.VARCHAR(120),primary_key=True, nullable=False),
+				Column('TYPE', types.VARCHAR(20),primary_key=True, nullable=False),
+				Column('CODE', types.VARCHAR(10),primary_key=True, nullable=False),
+				Column('SIZE', types.VARCHAR(100),primary_key=True, nullable=False),
+				Column('REF_URL', types.VARCHAR(100),primary_key=True, nullable=False),
+				Column('REF_IP', types.VARCHAR(100),primary_key=True, nullable=False)
+			)
+			Index("accessed", my_logs.c.ACCESSED)
 
 		except (AttributeError, exc.SQLAlchemyError, exc.ProgrammingError, exc.OperationalError) as e:
 			logger.error(str(e))

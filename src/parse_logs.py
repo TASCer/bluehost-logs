@@ -24,19 +24,21 @@ class LogEntry(NamedTuple):
 
 def process(log_paths: set):
 	all_log_entries = []
+	all_my_log_entries = []
 	all_sources = []
 	for p in log_paths:
 		logger.info(f"Processing: {p}")
 		with open(p) as logs:
-			site_log_entries: int = 0
-			site_sources: int = 0
+			site_log_entries: list = []
+			site_sources: list = []
 			for log in logs:
 				basic = log.split('" "')[0]
 				ip = basic.split("- - ")[0]
 				SOURCE = ip.rstrip()
 
-				# skip parsing system cron jobs on bluehost server or activity from my home office when not testing
-				if SOURCE == f'{my_secrets.bh_ip}' or SOURCE == f'{my_secrets.home_ip}':
+				#skip parsing system cron jobs on bluehost server
+				if SOURCE == f'{my_secrets.bh_ip}':
+					logger.info(f"cron job: {log}")
 					continue
 
 				basic_info = basic.split("- - ")[1]
@@ -100,12 +102,19 @@ def process(log_paths: set):
 					client_os = client[0]
 					CLIENT = client_os.replace(';', '')
 					client_format = client[1]
+				#  if activity from my home office ip
 
-				site_sources += 1
+				site_sources.append(SOURCE)
 				all_sources.append(SOURCE)
 				entry = LogEntry(SOURCE, server_timestamp, ACTION, FILE, TYPE, REF_URL, REF_IP, RES_CODE, SIZE, AGENT, CLIENT)
-				site_log_entries += 1
-				all_log_entries.append(entry)
-			logger.info(f"\t\t{site_log_entries} logs processed with {site_sources} unique")
 
-	return all_sources, all_log_entries
+				if SOURCE == my_secrets.home_ip:
+					all_my_log_entries.append(entry)
+
+				elif SOURCE != my_secrets.home_ip:
+					site_log_entries.append(entry)
+					all_log_entries.append(entry)
+			logger.info(f"\t\t{len(site_log_entries)+len(all_my_log_entries)} TOTAL logs processed with {len(site_sources)} unique")
+			logger.info(f"\t\t{len(all_my_log_entries)} TOTAL my logs processed")
+
+	return all_sources, all_log_entries, all_my_log_entries
