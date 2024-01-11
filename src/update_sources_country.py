@@ -87,4 +87,4 @@ def get(unique_ips: list):
                 except exc.ProgrammingError as e:
                     logger.error(e)
 
-    logger.info(f"SOURCES table: {len(no_country)-errors} updated with country names and ASN description. {errors} encountered")
+    logger.info(f"SOURCES table: {len(no_country)-errors} updated with country names and ASN description. {errors} errors encountered")

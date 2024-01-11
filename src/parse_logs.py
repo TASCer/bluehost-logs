@@ -114,7 +114,7 @@ def process(log_paths: set):
 				elif SOURCE != my_secrets.home_ip:
 					site_log_entries.append(entry)
 					all_log_entries.append(entry)
-			logger.info(f"\t\t{len(site_log_entries)+len(all_my_log_entries)} TOTAL logs processed with {len(site_sources)} unique")
-			logger.info(f"\t\t{len(all_my_log_entries)} TOTAL my logs processed")
+			logger.info(f"\t\t{len(site_log_entries)+len(all_my_log_entries)} TOTAL logs processed with {len(set(site_sources))} unique")
+			logger.info(f"\t\t{len(all_my_log_entries)} logs from home ip processed to my_logs table")
 
 	return all_sources, all_log_entries, all_my_log_entries
