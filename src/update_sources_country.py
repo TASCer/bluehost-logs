@@ -37,7 +37,7 @@ def get(unique_ips: list):
 
     with engine.connect() as conn, conn.begin():
             logger.info("Updating lookup table with source country name and description via IPWhois")
-
+            errors = 0
             try:
                 sql_no_country: CursorResult = conn.execute(text(f'''SELECT * from {SOURCES} WHERE COUNTRY = '' or COUNTRY is null;'''))
                 no_country: list = [i for i in sql_no_country]
@@ -52,7 +52,7 @@ def get(unique_ips: list):
                 except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
                         ipwhois.ASNParseError, ipwhois.ASNOriginLookupError, ipwhois.ASNRegistryError,
                         ipwhois.HostLookupError, ipwhois.HTTPLookupError) as e:
-                    logger.error(f'{e}')
+                    errors += 1
                     continue
 
                 asn_description: str = result['asn_description']
@@ -87,4 +87,4 @@ def get(unique_ips: list):
                 except exc.ProgrammingError as e:
                     logger.error(e)
 
-    logger.info(f"Lookup table updated {len(no_country)} with country names and ASN description")
+    logger.info(f"SOURCES table: {len(no_country)-errors} updated with country names and ASN description. {errors} encountered")
