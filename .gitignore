@@ -7,3 +7,4 @@
 /_old_logs/*
 /.env
 /issues
+/output/*
