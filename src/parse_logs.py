@@ -1,3 +1,4 @@
+import datetime as dt
 import logging
 import my_secrets
 import re
@@ -6,6 +7,13 @@ from logging import Logger
 from typing import NamedTuple
 
 logger: Logger = logging.getLogger(__name__)
+
+now: dt.datetime = dt.datetime.now()
+todays_date: str = now.strftime('%D').replace('/', '-')
+
+month_num = now.month
+month_name = now.strftime('%b')
+year = str(now.year)
 
 
 class LogEntry(NamedTuple):
@@ -28,7 +36,7 @@ def process(log_paths: set):
 	all_sources = []
 	for p in log_paths:
 		logger.info(f"Processing: {p}")
-		with open(f'{my_secrets.local_unzipped_path}{p}') as logs:
+		with open(f'{my_secrets.local_unzipped_path}{p}_{month_name}-{year}') as logs:
 			site_log_entries: list = []
 			site_sources: list = []
 			for log in logs:
