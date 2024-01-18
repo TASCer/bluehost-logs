@@ -28,6 +28,7 @@ root_logger.addHandler(fh)
 
 logger: Logger = logging.getLogger(__name__)
 
+# SERVER log paths less month-year
 tascs_logs_path = my_secrets.tascs_logs_zipped
 hoa_logs_path = my_secrets.hoa_logs_zipped
 roadspies_logs_path = my_secrets.roadspies_logs_zipped
