@@ -40,7 +40,7 @@ def secure_copy(paths: list[str], *args) -> set:
 		remote_zipped_filename = path+month_name+'-'+year+'.gz'
 
 		local_zipped_filename = path + month_name + '-' + year
-		local_zipped_filename = local_zipped_filename.split("/")[1]
+		local_zipped_filename = local_zipped_filename.split(".")[0].split('/')[1]
 		local_unzipped_filename = remote_zipped_filename.split("/")[1]
 
 		# COPY FROM SERVER
@@ -58,14 +58,5 @@ def secure_copy(paths: list[str], *args) -> set:
 			except (BaseException, FileNotFoundError) as e:
 				logger.critical(f"pcsp - {e}")
 
-		# Unzip file save to unzipped
-		try:
-			with gzip.open(f'{my_secrets.local_zipped_path}{local_zipped_filename}.gz') as zipped_file:
-				with open(f"{my_secrets.local_unzipped_path}{local_unzipped_filename}", 'wb') as unzipped_file:
-					unzipped_file.write(zipped_file.read())
-		except (BaseException, FileNotFoundError) as e:
-			logger.critical(f"{e}")
-
-		unzipped_paths.add(f"{my_secrets.local_unzipped_path}{local_unzipped_filename}")
 
 	return unzipped_paths
