@@ -1,11 +1,12 @@
 # TODO create db backups. Start fresh in 2024
 import datetime as dt
 import db_checks
-import get_logfiles
+import get_server_logs
 import logging
 import my_secrets
 import parse_logs
 import insert_activity
+import unzip_server_logs
 import update_sources_country
 import insert_unique_sources
 
@@ -32,7 +33,7 @@ hoa_logs_path = my_secrets.hoa_logs_zipped
 roadspies_logs_path = my_secrets.roadspies_logs_zipped
 tascs_logs_historical_path = my_secrets.tascs_logs_historical_zipped
 
-remote_log_file_paths = [hoa_logs_path]
+remote_log_file_paths = [tascs_logs_path, hoa_logs_path, roadspies_logs_path]
 # historical_remote_log_file_paths = [tascs_logs_historical_path}
 
 if __name__ == '__main__':
@@ -46,10 +47,12 @@ if __name__ == '__main__':
 		logger.info("RDBMS is available and ready")
 	else:
 		logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
-
 	logger.info("***** STARTING LOG PROCESSING *****")
-	processed_log_path: list[str] = get_logfiles.secure_copy(remote_log_file_paths, month_num, year)
-	ips, processed_logs, my_processed_logs = parse_logs.process(processed_log_path)
+
+	local_zipped_logfiles: list[str] = get_server_logs.secure_copy(remote_log_file_paths, month_num, year)
+	local_unzipped_logfiles: list[str] = unzip_server_logs.process(local_zipped_logfiles)
+
+	ips, processed_logs, my_processed_logs = parse_logs.process(local_unzipped_logfiles)
 	unique_sources: set = set(ips)
 	insert_unique_sources.update(unique_sources)
 	update_sources_country.get(unique_sources)

@@ -28,7 +28,7 @@ def process(log_paths: set):
 	all_sources = []
 	for p in log_paths:
 		logger.info(f"Processing: {p}")
-		with open(p) as logs:
+		with open(f'{my_secrets.local_unzipped_path}{p}') as logs:
 			site_log_entries: list = []
 			site_sources: list = []
 			for log in logs:
@@ -38,7 +38,7 @@ def process(log_paths: set):
 
 				#skip parsing system cron jobs on bluehost server
 				if SOURCE == f'{my_secrets.bh_ip}':
-					logger.info(f"cron job: {log}")
+					# logger.info(f"cron job?: {log}")
 					continue
 
 				basic_info = basic.split("- - ")[1]
@@ -115,6 +115,6 @@ def process(log_paths: set):
 					site_log_entries.append(entry)
 					all_log_entries.append(entry)
 			logger.info(f"\t\t{len(site_log_entries)+len(all_my_log_entries)} TOTAL logs processed with {len(set(site_sources))} unique")
-			logger.info(f"\t\t{len(all_my_log_entries)} logs from home ip processed to my_logs table")
+			logger.info(f"\t\t{len(all_my_log_entries)} logs from home ip added to my_logs table")
 
 	return all_sources, all_log_entries, all_my_log_entries
