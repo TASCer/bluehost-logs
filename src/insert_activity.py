@@ -1,9 +1,10 @@
 import datetime as dt
 import logging
+import my_secrets
 
 from dateutil.parser import *
 from datetime import datetime
-from src import my_secrets
+# from src import my_secrets
 from ipwhois.utils import get_countries
 from logging import Logger
 from sqlalchemy.engine import Engine
