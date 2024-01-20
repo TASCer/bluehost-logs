@@ -3,6 +3,7 @@ import datetime as dt
 import db_checks
 import get_server_logs
 import logging
+import mailer
 import my_secrets
 import parse_logs
 import insert_activity
@@ -59,3 +60,4 @@ if __name__ == '__main__':
 	update_sources_country.get(unique_sources)
 	insert_activity.update(processed_logs, my_processed_logs)
 	logger.info("***** COMPLETED WEB LOG PROCESSING *****")
+	mailer.send_mail("Bluehost log processing complete. Check logs for counts")
