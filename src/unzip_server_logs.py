@@ -32,7 +32,7 @@ def process(files: list[str], *args) -> set:
 
 		try:
 			local_file = file.split('.')[0]
-			with gzip.open(f'{my_secrets.local_zipped_path}{file}') as zipped_file:
+			with gzip.open(f'{my_secrets.local_zipped_path}{file}', 'rb') as zipped_file:
 				with open(f"{my_secrets.local_unzipped_path}{local_file}_{month_name}-{year}", 'wb') as unzipped_file:
 					unzipped_file.write(zipped_file.read())
 		except (BaseException, FileNotFoundError) as e:
