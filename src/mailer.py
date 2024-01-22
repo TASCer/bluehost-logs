@@ -71,9 +71,9 @@ def send_mail(subject: str, attachment_path: object = None):
     with smtplib.SMTP(my_secrets.postfix_mailhost, 25) as server:
         try:
             server.sendmail(sender_email, receiver_email, msg.as_string())
-
+            logger.info("emil sent")
         except smtplib.SMTPException as e:
-            logger.exception(str(e))
+            logger.exception(f"email not sent {str(e)}")
 
     # #################################### SSL TESTING
     # context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)   # ssl.create_default_context
