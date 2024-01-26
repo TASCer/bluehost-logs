@@ -51,13 +51,13 @@ if __name__ == '__main__':
 		logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
 	logger.info("***** STARTING LOG PROCESSING *****")
 
-	# local_zipped_logfiles: list[str] = get_server_logs.secure_copy(remote_log_file_paths, month_num, year)
-	# local_unzipped_logfiles: list[str] = unzip_server_logs.process(local_zipped_logfiles)
-	#
-	# ips, processed_logs, my_processed_logs = parse_logs.process(local_unzipped_logfiles)
-	# unique_sources: set = set(ips)
-	# insert_unique_sources.update(unique_sources)
-	# update_sources_country.get(unique_sources)
-	# insert_activity.update(processed_logs, my_processed_logs)
-	# logger.info("***** COMPLETED WEB LOG PROCESSING *****")
+	local_zipped_logfiles: list[str] = get_server_logs.secure_copy(remote_log_file_paths, month_num, year)
+	local_unzipped_logfiles: list[str] = unzip_server_logs.process(local_zipped_logfiles)
+
+	ips, processed_logs, my_processed_logs = parse_logs.process(local_unzipped_logfiles)
+	unique_sources: set = set(ips)
+	insert_unique_sources.update(unique_sources)
+	update_sources_country.get(unique_sources)
+	insert_activity.update(processed_logs, my_processed_logs)
+	logger.info("***** COMPLETED WEB LOG PROCESSING *****")
 	mailer.send_mail("Bluehost log processing complete. Check log for counts", f'../log_{todays_date}.log')
