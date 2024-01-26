@@ -16,9 +16,7 @@ now: datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
 email_reciever: list[str] = my_secrets.email_to
-email_sender: str = my_secrets.mail_from
-email_from: str
-
+email_sender: str = my_secrets.postfix_mail_from
 mail_server = my_secrets.postfix_mailhost
 
 
@@ -62,9 +60,9 @@ def send_mail(subject: str, attachment_path: object = None):
         html_basic: str = """\
             <html>
               <body>
-                <p><b>Python Report Mailer</b>
+                <p><b>Python Bluehost Log Parser Report</b>
                 <br>
-                   Visit <a href="https://roadspies.tascs.test">ROADSPIES</a> 
+                   Visit <a href="https://www.tascs.test">TASCS</a> 
                    for more information.
                 </p>
               </body>
@@ -84,27 +82,28 @@ def send_mail(subject: str, attachment_path: object = None):
     # PORT 587 w/auth sasl_method = PLAIN phpmailer has it LOGIN
     # try:
     #     with smtplib.SMTP(mail_server, 587, local_hostname= 'tascslt.tascs.local') as server:
+    #         server.ehlo()
     #         server.starttls()
     #         server.login(my_secrets.postfix_user, my_secrets.postfix_password)
-    #         server.ehlo()
     #         # server.starttls()
     #         server.sendmail(my_secrets.mail_from, email_reciever, msg.as_string())
     #         logger.info("emil sent")
     #
-    # except (ssl.ALERT_DESCRIPTION_HANDSHAKE_FAILURE, smtplib.SMTPException) as e:
+    # except (smtplib.SMTPException) as e:
     #     logger.exception(f"{str(e)}")
 
 
 
- #################################### SSL MODULE TESTING
+ #################################### SSL MODULE TESTING [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:997)  1123 on RPI4
     print(ssl.OPENSSL_VERSION)
-    # paths = ssl.get_default_verify_paths(cafile='./misc/tascs.test.pem', capath='./misc/tascs.test.pem')
-    # print(paths)
-    # context = ssl.create_default_context(purpose=Purpose.SERVER_AUTH, cafile='TESTS-CA.pem', capath='/home/todd//tascs.test.pem')
-    context = ssl.create_default_context(purpose=Purpose.SERVER_AUTH, cafile=None, capath=None)
-    ciphers = context.get_ciphers()
-    print(len(ciphers))
-    # certs = context.get_ca_certs()
+    context = ssl.create_default_context(purpose=Purpose.SERVER_AUTH)
+    context.get_ciphers()
+    context.get_ca_certs()
+    # context.options |= ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3  # Disable SSLv2 and SSLv3
+
+    # cert = ssl.get_server_certificate(addr=('tascs.test', 587))#, ssl_version=3, ca_certs=None)
+    # print(ciphers)
+    # print(len(ciphers))
     # # certs = context.load_default_certs()
     # print(len(certs))
     # for c in certs:
@@ -112,23 +111,22 @@ def send_mail(subject: str, attachment_path: object = None):
     #     for i in issuer:
     #         print(i[0])
         # print(issuer[2])
-    # context.set_ciphers('TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384')        #("TLS_RSA_WITH_AES_128_CBC_SHA256")     # ("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256")
+    # context.set_ciphers('ALL')        #("TLS_RSA_WITH_AES_128_CBC_SHA256")     # ("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256")
     # context.hostname_checks_common_name = False
     # context.check_hostname = False
     # context.verify_mode = ssl.CERT_NONE
     # ser_cert = ssl.get_server_certificate((my_secrets.postfix_mailhost, 587))
     # context.load_default_certs()
-    ca = context.get_ca_certs()
+    # ca = context.get_ca_certs()
     # c = context.get_ciphers()journ
     # ciphers = list({x['name'] for x in c})
     # print(ciphers)
     # print(ca)
     try:
         with smtplib.SMTP_SSL(mail_server, 587, local_hostname='tascslt.tascs.local', context=context) as server:
+            server.ehlo()
             server.starttls()
             server.login(my_secrets.postfix_user, my_secrets.postfix_password)
-            server.ehlo()
-            # server.starttls()
             server.sendmail(my_secrets.mail_from, email_reciever, msg.as_string())
             logger.info("emil sent")
 
