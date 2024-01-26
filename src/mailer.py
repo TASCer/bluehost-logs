@@ -16,8 +16,11 @@ now: datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
 email_reciever: list[str] = my_secrets.email_to
+
 email_sender: str = my_secrets.postfix_mail_from
 mail_server = my_secrets.postfix_mailhost
+email_user = my_secrets.postfix_user
+email_password = my_secrets.postfix_password
 
 
 def send_mail(subject: str, attachment_path: object = None):
@@ -80,28 +83,38 @@ def send_mail(subject: str, attachment_path: object = None):
         #     logger.exception(f"email not sent {str(e)}")
 
     # PORT 587 w/auth sasl_method = PLAIN phpmailer has it LOGIN
+    try:
+        with smtplib.SMTP(mail_server, 587, local_hostname= 'tascslt.tascs.local') as server:
+            server.ehlo()
+            server.starttls()
+            server.login(email_user, email_password)
+            server.sendmail(email_sender, email_reciever, msg.as_string())
+            logger.info("emil sent")
+
+    except (smtplib.SMTPException) as e:
+        logger.exception(f"{str(e)}")
+
+
+
+ #################################### SSL MODULE TESTING [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:997)  1123 on RPI4
+    # print(ssl.OPENSSL_VERSION)
+    # context = ssl.create_default_context(purpose=Purpose.SERVER_AUTH)
+    # context.get_ciphers()
+    # context.get_ca_certs()
+    # # context.options |= ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3  # Disable SSLv2 and SSLv3
+    #
     # try:
-    #     with smtplib.SMTP(mail_server, 587, local_hostname= 'tascslt.tascs.local') as server:
+    #     with smtplib.SMTP_SSL(mail_server, 587, local_hostname='tascslt.tascs.local', context=context) as server:
     #         server.ehlo()
     #         server.starttls()
     #         server.login(my_secrets.postfix_user, my_secrets.postfix_password)
-    #         # server.starttls()
     #         server.sendmail(my_secrets.mail_from, email_reciever, msg.as_string())
     #         logger.info("emil sent")
     #
     # except (smtplib.SMTPException) as e:
     #     logger.exception(f"{str(e)}")
 
-
-
- #################################### SSL MODULE TESTING [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:997)  1123 on RPI4
-    print(ssl.OPENSSL_VERSION)
-    context = ssl.create_default_context(purpose=Purpose.SERVER_AUTH)
-    context.get_ciphers()
-    context.get_ca_certs()
-    # context.options |= ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3  # Disable SSLv2 and SSLv3
-
-    # cert = ssl.get_server_certificate(addr=('tascs.test', 587))#, ssl_version=3, ca_certs=None)
+ # cert = ssl.get_server_certificate(addr=('tascs.test', 587))#, ssl_version=3, ca_certs=None)
     # print(ciphers)
     # print(len(ciphers))
     # # certs = context.load_default_certs()
@@ -122,14 +135,3 @@ def send_mail(subject: str, attachment_path: object = None):
     # ciphers = list({x['name'] for x in c})
     # print(ciphers)
     # print(ca)
-    try:
-        with smtplib.SMTP_SSL(mail_server, 587, local_hostname='tascslt.tascs.local', context=context) as server:
-            server.ehlo()
-            server.starttls()
-            server.login(my_secrets.postfix_user, my_secrets.postfix_password)
-            server.sendmail(my_secrets.mail_from, email_reciever, msg.as_string())
-            logger.info("emil sent")
-
-    except (smtplib.SMTPException) as e:
-        logger.exception(f"{str(e)}")
-
