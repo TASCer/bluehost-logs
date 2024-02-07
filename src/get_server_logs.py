@@ -10,7 +10,8 @@ from logging import Logger
 
 logger: Logger = logging.getLogger(__name__)
 
-now: datetime = dt.datetime.now()
+now: dt = dt.date.today()
+todays_date: str = now.strftime('%D').replace('/', '-')
 
 
 def secure_copy(paths: list[str], *args) -> set:
@@ -52,7 +53,6 @@ def secure_copy(paths: list[str], *args) -> set:
 		if not platform.system() == 'Windows':
 			try:
 				os.system(f'scp {path} {my_secrets.local_zipped_path}')
-				# site = my_secrets.
 				logger.info(f"{path} {my_secrets.local_zipped_path} retrieved from bh server")
 			except (BaseException, FileNotFoundError) as e:
 				logger.critical(f"{path} LOG NOT RETRIEVED. Investigate")
@@ -74,5 +74,5 @@ def secure_copy(paths: list[str], *args) -> set:
 		return unzipped_paths
 
 	else:
-		mailer.send_mail("Error running pscp to Bluehost to get logs. Check log")
+		mailer.send_mail("Bluehost-logs ERROR during a pscp copy. Check log", f'../log_{todays_date}.log')
 		exit()

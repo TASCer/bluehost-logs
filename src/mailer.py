@@ -38,12 +38,12 @@ def send_mail(subject: str, attachment_path: object = None):
         html_attachments: str = """\
           <html>
             <body>
-              <p><b>Python HOA Insights Report Mailer</b></p>
+              <p><b>Python BLUEHOST Weblogs Report Mailer</b></p>
               <br>
-              <p>Please find the bi-monthly community changes report attached.</p>
+              <p>Please find the xxxxxx report attached.</p>
               <br>
               <p>Visit below for more information</p>
-              <a href="https://hoa.tascs.locaL">TASCS - HOA</a>       
+              <a href="https://tascs.test">TASCS - HOA</a>       
             </body>
           </html>
           """
@@ -89,7 +89,7 @@ def send_mail(subject: str, attachment_path: object = None):
             server.starttls()
             server.login(email_user, email_password)
             server.sendmail(email_sender, email_reciever, msg.as_string())
-            logger.info("emil sent")
+            logger.info("email sent")
 
     except (smtplib.SMTPException) as e:
         logger.exception(f"{str(e)}")
