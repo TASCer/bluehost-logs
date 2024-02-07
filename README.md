@@ -19,14 +19,14 @@ Depdendancies noted in requirements.txt
 
 #### src folder contains: 
 
-> Python files needed to retrieve, process, and store web server logs to a database for analysis
+* Python files needed to retrieve, process, and store web server logs to a database for analysis
 
 #### assets folder contains:
 
-        * 'sample_unzipped_logfile'  with anonymized data
-        * 'logo.png' for README logo
-        * A sample_my_secrets.py secrets template
-        * File(s) for scheduled running
+* 'sample_unzipped_logfile'  with anonymized data
+* 'logo.png' for README logo
+* A sample_my_secrets.py secrets template
+* File(s) for scheduled running
             
 [TASC Solutions LLC](https://www.tascs.net)
 
