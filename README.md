@@ -21,10 +21,10 @@ src folder contains:
 
 assets folder contains:
 
-        1. 'sample_unzipped_logfile'  with anonymized data
-        2. 'logo' for README
-        3, A sample_my_secrets.py secrets template
-        4. File(s) for scheduled running
+        * 'sample_unzipped_logfile'  with anonymized data
+        * 'logo' for README
+        * A sample_my_secrets.py secrets template
+        * File(s) for scheduled running
             
 [TASC Solutions LLC](https://www.tascs.net)
 
