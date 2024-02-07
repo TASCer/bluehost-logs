@@ -15,7 +15,7 @@ Depdendancies noted in requirements.txt
      * If IPWhois error during source ip lookup, exception message is entered as country name
      * If country ALPHA2 code not found, log source
 
-#### src folder contains: 
+#### src folder contains 
 
         Python files needed to retrieve, process, and store web server logs to a database for analysis
 
