@@ -60,6 +60,6 @@ if __name__ == '__main__':
 	update_sources_country.get(unique_sources)
 	insert_activity.update(processed_logs, my_processed_logs)
 	logger.info("***** COMPLETED WEB LOG PROCESSING *****")
-	mailer.send_mail("Bluehost log processing complete")
+	mailer.send_mail(f"Bluehost log processing complete. Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}")
 
 

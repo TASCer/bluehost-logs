@@ -28,6 +28,8 @@ Depdendancies noted in requirements.txt
 * A sample_my_secrets.py secrets template
 * File(s) for scheduled running
             
+---
+
 [TASC Solutions LLC](https://www.tascs.net)
 
 * [x] TASC 1 - CREATE README
