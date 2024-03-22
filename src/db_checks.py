@@ -4,7 +4,7 @@ import my_secrets
 import sqlalchemy as sa
 
 from logging import Logger
-from sqlalchemy import create_engine, exc, types, text, Column, Table, MetaData, ForeignKey, Index
+from sqlalchemy import create_engine, exc, types, Column, Table, MetaData, ForeignKey, Index
 from sqlalchemy_utils import database_exists, create_database
 
 now = dt.datetime.now()
@@ -19,6 +19,7 @@ DB_PW = f'{my_secrets.dbpass}'
 LOGS = 'logs'
 SOURCES = 'sources'
 MY_LOGS = 'my_logs'
+
 
 def schema():
 	"""Check to see if schema/DB_NAME is present, if not, create"""
@@ -66,14 +67,14 @@ def tables():
 				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True, nullable=False),
 				Column('SOURCE', types.VARCHAR(15), ForeignKey("sources.SOURCE"), nullable=False),
 				Column('CLIENT', types.VARCHAR(200), primary_key=True, nullable=False),
-				Column('AGENT', types.VARCHAR(100),primary_key=True, nullable=False),
-				Column('ACTION', types.VARCHAR(12),primary_key=True, nullable=False),
-				Column('FILE', types.VARCHAR(120),primary_key=True, nullable=False),
-				Column('TYPE', types.VARCHAR(20),primary_key=True, nullable=False),
-				Column('CODE', types.VARCHAR(10),primary_key=True, nullable=False),
-				Column('SIZE', types.VARCHAR(100),primary_key=True, nullable=False),
-				Column('REF_URL', types.VARCHAR(100),primary_key=True, nullable=False),
-				Column('REF_IP', types.VARCHAR(100),primary_key=True, nullable=False)
+				Column('AGENT', types.VARCHAR(100), primary_key=True, nullable=False),
+				Column('ACTION', types.VARCHAR(12), primary_key=True, nullable=False),
+				Column('FILE', types.VARCHAR(120), primary_key=True, nullable=False),
+				Column('TYPE', types.VARCHAR(20), primary_key=True, nullable=False),
+				Column('CODE', types.VARCHAR(10), primary_key=True, nullable=False),
+				Column('SIZE', types.VARCHAR(100), primary_key=True, nullable=False),
+				Column('REF_URL', types.VARCHAR(100), primary_key=True, nullable=False),
+				Column('REF_IP', types.VARCHAR(100), primary_key=True, nullable=False)
 			)
 			Index("accessed", logs.c.ACCESSED)
 
@@ -89,14 +90,14 @@ def tables():
 				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True, nullable=False),
 				Column('SOURCE', types.VARCHAR(15), ForeignKey("sources.SOURCE"), nullable=False),
 				Column('CLIENT', types.VARCHAR(200), primary_key=True, nullable=False),
-				Column('AGENT', types.VARCHAR(100),primary_key=True, nullable=False),
-				Column('ACTION', types.VARCHAR(12),primary_key=True, nullable=False),
-				Column('FILE', types.VARCHAR(120),primary_key=True, nullable=False),
-				Column('TYPE', types.VARCHAR(20),primary_key=True, nullable=False),
-				Column('CODE', types.VARCHAR(10),primary_key=True, nullable=False),
-				Column('SIZE', types.VARCHAR(100),primary_key=True, nullable=False),
-				Column('REF_URL', types.VARCHAR(100),primary_key=True, nullable=False),
-				Column('REF_IP', types.VARCHAR(100),primary_key=True, nullable=False)
+				Column('AGENT', types.VARCHAR(100), primary_key=True, nullable=False),
+				Column('ACTION', types.VARCHAR(12), primary_key=True, nullable=False),
+				Column('FILE', types.VARCHAR(120), primary_key=True, nullable=False),
+				Column('TYPE', types.VARCHAR(20), primary_key=True, nullable=False),
+				Column('CODE', types.VARCHAR(10), primary_key=True, nullable=False),
+				Column('SIZE', types.VARCHAR(100), primary_key=True, nullable=False),
+				Column('REF_URL', types.VARCHAR(100), primary_key=True, nullable=False),
+				Column('REF_IP', types.VARCHAR(100), primary_key=True, nullable=False)
 			)
 			Index("accessed", my_logs.c.ACCESSED)
 

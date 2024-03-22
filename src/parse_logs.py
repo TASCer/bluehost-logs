@@ -46,7 +46,6 @@ def process(log_paths: set):
 
 				#skip parsing system cron jobs on bluehost server
 				if SOURCE == f'{my_secrets.bh_ip}':
-					# logger.info(f"cron job?: {log}")
 					continue
 
 				basic_info = basic.split("- - ")[1]
@@ -110,7 +109,6 @@ def process(log_paths: set):
 					client_os = client[0]
 					CLIENT = client_os.replace(';', '')
 					client_format = client[1]
-				#  if activity from my home office ip
 
 				site_sources.append(SOURCE)
 				all_sources.append(SOURCE)

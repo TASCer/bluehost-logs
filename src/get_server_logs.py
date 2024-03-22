@@ -5,7 +5,6 @@ import my_secrets
 import os
 import platform
 
-from datetime import datetime
 from logging import Logger
 
 logger: Logger = logging.getLogger(__name__)

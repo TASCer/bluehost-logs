@@ -2,7 +2,8 @@ import datetime as dt
 import gzip
 import logging
 import my_secrets
-import os
+# import os
+# Linux issue? Test on rpi4 if there is an issue
 import platform
 
 from datetime import datetime
@@ -37,6 +38,7 @@ def process(files: list[str], *args) -> set:
 					unzipped_file.write(zipped_file.read())
 		except (BaseException, FileNotFoundError) as e:
 			logger.critical(f"{e}")
+			local_file = None
 
 		local_files.add(local_file)
 
