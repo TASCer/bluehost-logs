@@ -40,8 +40,8 @@ historical_remote_log_file_paths = [tascs_logs_historical_path]
 
 if __name__ == '__main__':
 	logger.info("Checking RDBMS Availability")
-	month_num: int = None
-	year: str = None
+	month_num: int | None = None
+	year: str | None = None
 	have_database: bool = db_checks.schema()
 	have_tables: bool = db_checks.tables()
 
@@ -52,8 +52,8 @@ if __name__ == '__main__':
 
 	logger.info("***** STARTING LOG PROCESSING *****")
 
-	local_zipped_logfiles: list[str] = get_server_logs.secure_copy(remote_log_file_paths, month_num, year)
-	local_unzipped_logfiles: list[str] = unzip_server_logs.process(local_zipped_logfiles)
+	local_zipped_logfiles: set[str] = get_server_logs.secure_copy(remote_log_file_paths, month_num, year)
+	local_unzipped_logfiles: set[str] = unzip_server_logs.process(local_zipped_logfiles)
 
 	ips, processed_logs, my_processed_logs = parse_logs.process(local_unzipped_logfiles)
 
