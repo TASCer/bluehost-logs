@@ -14,7 +14,7 @@ logger: Logger = logging.getLogger(__name__)
 now: datetime = dt.datetime.now()
 
 
-def process(files: list[str], *args) -> set:
+def process(files: set[str], *args) -> set:
 	"""
 	Takes in a list of paths for location of website log files
 	If historical
