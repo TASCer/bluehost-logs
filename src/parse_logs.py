@@ -30,7 +30,7 @@ class LogEntry(NamedTuple):
 	REF_IP: str
 
 
-def process(log_paths: set):
+def process(log_paths: set) -> set:
 	all_log_entries = []
 	all_my_log_entries = []
 	all_sources = []
@@ -44,7 +44,7 @@ def process(log_paths: set):
 				ip = basic.split("- - ")[0]
 				SOURCE = ip.rstrip()
 
-				#skip parsing system cron jobs on bluehost server
+				# skip parsing system cron jobs on bluehost server
 				if SOURCE == f'{my_secrets.bh_ip}':
 					continue
 
@@ -81,7 +81,7 @@ def process(log_paths: set):
 					RES_CODE, SIZE = action2.split(' ')
 
 				except ValueError as e:
-					logger.error("Possible bot, check logs")
+					logger.error(f"Possible bot, check logs -> {e}")
 					continue
 
 				agent_info = log.split('" "')[1]
