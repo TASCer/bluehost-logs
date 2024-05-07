@@ -15,7 +15,7 @@ LOGS = 'logs'
 SOURCES = 'sources'
 
 
-def update(unique_ips: list) -> object:
+def update(unique_ips: set) -> None:
     """Takes in list of unique source ip addresses and updates lookup table
         to have country name and descryption added later"""
     logger: Logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ def update(unique_ips: list) -> object:
 
     except exc.SQLAlchemyError as e:
         logger.critical(str(e))
-        engine = None
+        # engine = None
         exit()
 
     with engine.connect() as conn, conn.begin():

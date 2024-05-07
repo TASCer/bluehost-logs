@@ -28,7 +28,7 @@ def parse_timestamp(ts: str) -> datetime:
     return ts_parsed
 
 
-def update(log_entries: list, my_log_entries: list) -> object:
+def update(log_entries: list, my_log_entries: list) -> None:
     """Updates lookup table with unique ips from ALPHA-2 to full country name"""
     logger: Logger = logging.getLogger(__name__)
     try:
@@ -36,7 +36,7 @@ def update(log_entries: list, my_log_entries: list) -> object:
 
     except exc.SQLAlchemyError as e:
         logger.critical(str(e))
-        engine = None
+        # engine = None
         exit()
 
     with engine.connect() as conn, conn.begin():
@@ -58,3 +58,5 @@ def update(log_entries: list, my_log_entries: list) -> object:
                 conn.execute(text(f'''INSERT IGNORE INTO {MY_LOGS} VALUES('{ts_parsed}', '{ip}', '{client}', '{agent_name}', '{action}', '{file}', '{conn_type}', '{action_code}', '{action_size}', '{ref_url}', '{ref_ip}');'''))
             except (exc.SQLAlchemyError, exc.ProgrammingError, exc.DataError) as e:
                 logger.error(e)
+
+    logger.info(f"{len(my_log_entries)} entries added to {MY_LOGS} table")

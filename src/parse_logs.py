@@ -4,7 +4,7 @@ import my_secrets
 import re
 
 from logging import Logger
-from typing import NamedTuple
+from typing import NamedTuple, Tuple
 
 logger: Logger = logging.getLogger(__name__)
 
@@ -30,15 +30,20 @@ class LogEntry(NamedTuple):
 	REF_IP: str
 
 
-def process(log_paths: set) -> set:
+def process(log_paths: set) -> Tuple:
 	all_log_entries = []
 	all_my_log_entries = []
 	all_sources = []
+	all_long_files = []
+
 	for p in log_paths:
 		logger.info(f"Processing: {p}")
 		with open(f'{my_secrets.local_unzipped_path}{p}_{month_name}-{year}') as logs:
 			site_log_entries: list = []
 			site_sources: list = []
+			site_long_files = []
+			site_my_log_entries = []
+
 			for log in logs:
 				basic = log.split('" "')[0]
 				ip = basic.split("- - ")[0]
@@ -60,6 +65,9 @@ def process(log_paths: set) -> set:
 					continue
 
 				if len(FILE) >= 120:
+					site_long_files.append(SOURCE)
+					all_long_files.append((server_timestamp, SOURCE))
+
 					try:
 						action_list = FILE.split('?')
 						action_file1 = action_list[0]
@@ -74,7 +82,7 @@ def process(log_paths: set) -> set:
 							logger.error(e)
 
 					FILE = action_file1+action_file2+' *TRUNCATED*'
-					logger.warning(f"\t\t{SOURCE} had too long requested file name, truncated")
+					# logger.warning(f"\t\t{SOURCE} had too long requested file name, truncated")
 
 				try:
 					action2 = basic_info.split('"')[2].strip()
@@ -116,11 +124,17 @@ def process(log_paths: set) -> set:
 
 				if SOURCE == my_secrets.home_ip:
 					all_my_log_entries.append(entry)
+					site_my_log_entries.append(entry)
 
 				elif SOURCE != my_secrets.home_ip:
 					site_log_entries.append(entry)
 					all_log_entries.append(entry)
-			logger.info(f"\t\t{len(site_log_entries)+len(all_my_log_entries)} TOTAL logs processed with {len(set(site_sources))} unique")
-			logger.info(f"\t\t{len(all_my_log_entries)} logs from home ip added to my_logs table")
+
+			logger.info(f"\t\t{len(site_log_entries)} NON SOHO logs with {len(set(site_log_entries))} unique")
+			logger.info(f"\t\t{len(site_my_log_entries)} SOHO logs")
+			logger.info(f"\t\t{len(site_log_entries) + len(site_my_log_entries)} SITE LOGS")
+
+			if len(site_long_files) >= 1:
+				logger.warning(f"\t\t{len(site_long_files)} long file names encountered.")
 
 	return all_sources, all_log_entries, all_my_log_entries

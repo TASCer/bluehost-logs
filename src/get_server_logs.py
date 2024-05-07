@@ -54,7 +54,7 @@ def secure_copy(paths: list[str], *args) -> set:
 				os.system(f'scp {path} {my_secrets.local_zipped_path}')
 				logger.info(f"{path} {my_secrets.local_zipped_path} retrieved from bh server")
 			except (BaseException, FileNotFoundError) as e:
-				logger.critical(f"{path} LOG NOT RETRIEVED. Investigate")
+				logger.critical(f"{path} LOG NOT RETRIEVED. Investigate {e}")
 
 		else:
 			try:
@@ -67,7 +67,7 @@ def secure_copy(paths: list[str], *args) -> set:
 			except FileNotFoundError as file_e:
 				logger.critical(f"File not found - {file_e}")
 			except os.error as os_e:
-				logger.critical(f"Issue copying remote file for: {local_unzipped_filename}")
+				logger.critical(f"Issue copying remote file for: {local_unzipped_filename}:{os_e}")
 
 	if copy_response == 0:
 		return unzipped_paths
