@@ -43,8 +43,6 @@ def secure_copy(paths: list[str], *args) -> set:
 	for path in paths:
 		remote_zipped_filename = path+month_name+'-'+year+'.gz'
 
-		local_zipped_filename = path + month_name + '-' + year
-		local_zipped_filename = local_zipped_filename.split(".")[0].split('/')[1]
 		local_unzipped_filename = remote_zipped_filename.split("/")[1]
 
 		unzipped_paths.add(local_unzipped_filename)
