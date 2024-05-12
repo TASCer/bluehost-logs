@@ -11,9 +11,9 @@ logger: Logger = logging.getLogger(__name__)
 now: dt.datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
-month_num = now.month
-month_name = now.strftime('%b')
-year = str(now.year)
+month_num: int = now.month
+month_name: str = now.strftime('%b')
+year: str = str(now.year)
 
 
 class LogEntry(NamedTuple):
@@ -30,38 +30,38 @@ class LogEntry(NamedTuple):
 	REF_IP: str
 
 
-def process(log_paths: set) -> Tuple:
-	all_log_entries = []
-	all_my_log_entries = []
-	all_sources = []
-	all_long_files = []
+def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
+	all_log_entries: list = []
+	all_my_log_entries: list = []
+	all_sources: list = []
+	all_long_files: list = []
 
 	for p in log_paths:
 		logger.info(f"Processing: {p}")
 		with open(f'{my_secrets.local_unzipped_path}{p}_{month_name}-{year}') as logs:
 			site_log_entries: list = []
 			site_sources: list = []
-			site_long_files = []
-			site_my_log_entries = []
+			site_long_files: list = []
+			site_my_log_entries: list = []
 
 			for log in logs:
-				basic = log.split('" "')[0]
-				ip = basic.split("- - ")[0]
-				SOURCE = ip.rstrip()
+				basic: str = log.split('" "')[0]
+				ip: str = basic.split("- - ")[0]
+				SOURCE: str = ip.rstrip()
 
 				# skip parsing system cron jobs on bluehost server
 				if SOURCE == f'{my_secrets.bh_ip}':
 					continue
 
-				basic_info = basic.split("- - ")[1]
-				server_timestamp = basic_info.split(']')[0][1:]
+				basic_info: str = basic.split("- - ")[1]
+				server_timestamp: str = basic_info.split(']')[0][1:]
 
 				try:
-					action1 = basic_info.split('"')[1]
+					action1: str = basic_info.split('"')[1]
 					ACTION, FILE, TYPE = action1.split(' ')
 
-				except ValueError as e:
-					logger.error(f"{ip}--{e}")
+				except (ValueError, IndexError) as e:
+					logger.error(f"BASIC INFO SPLIT ERROR: {ip}--{e}")
 					continue
 
 				if len(FILE) >= 120:
@@ -69,13 +69,13 @@ def process(log_paths: set) -> Tuple:
 					all_long_files.append((server_timestamp, SOURCE))
 
 					try:
-						action_list = FILE.split('?')
-						action_file1 = action_list[0]
-						action_file2 = action_list[1][:80]
+						action_list: str = FILE.split('?')
+						action_file1: str = action_list[0]
+						action_file2: str = action_list[1][:80]
 					except IndexError:
 						try:
-							action_list = FILE.split('+')
-							action_file1 = action_list[0]
+							action_list: str = FILE.split('+')
+							action_file1: str = action_list[0]
 							action_file2 = ''
 
 						except IndexError as e:
@@ -97,10 +97,10 @@ def process(log_paths: set) -> Tuple:
 				AGENT = agent_list[0].replace('"', '')
 
 				if AGENT.startswith('-'):
-					AGENT = "NA"
+					AGENT: str = "NA"
 
-				REF_IP = agent_list[-1].strip()
-				REF_URL = agent_list[-2]
+				REF_IP: str = agent_list[-1].strip()
+				REF_URL: str = agent_list[-2]
 
 				# finds everything between all(    )
 				client: list = re.findall("\((.*?)\)", log)
@@ -130,11 +130,13 @@ def process(log_paths: set) -> Tuple:
 					site_log_entries.append(entry)
 					all_log_entries.append(entry)
 
-			logger.info(f"\t\t{len(site_log_entries)} NON SOHO logs with {len(set(site_log_entries))} unique")
+			logger.info(f"\t\t{len(site_log_entries)} NON SOHO logs with {len(set(site_sources))} unique source ip")
 			logger.info(f"\t\t{len(site_my_log_entries)} SOHO logs")
-			logger.info(f"\t\t{len(site_log_entries) + len(site_my_log_entries)} SITE LOGS")
+			logger.info(f"\t\t{len(site_log_entries) + len(site_my_log_entries)} SITE LOG ENTRIES")
 
 			if len(site_long_files) >= 1:
 				logger.warning(f"\t\t{len(site_long_files)} long file names encountered.")
+
+	logger.warning(f"\t\t{len(all_long_files)} LOG ENTRIES HAD FILE NAME OVER 120 chars.")
 
 	return all_sources, all_log_entries, all_my_log_entries
