@@ -22,7 +22,7 @@ root_logger.setLevel(logging.INFO)
 fh = logging.FileHandler(f'../log_{todays_date}.log')
 fh.setLevel(logging.DEBUG)
 
-formatter: Formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter: Formatter = logging.Formatter('%(asctime)s - %(name)s -%(lineno)d - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
 
 root_logger.addHandler(fh)
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
 	unique_sources: set = set(ips)
 	insert_unique_sources.update(unique_sources)
-	update_sources_country.get(unique_sources)
+	update_sources_country.get()
 	insert_activity.update(processed_logs, my_processed_logs)
 
 	logger.info("***** COMPLETED WEB LOG PROCESSING *****")
