@@ -61,7 +61,7 @@ def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
 					ACTION, FILE, TYPE = action1.split(' ')
 
 				except (ValueError, IndexError) as e:
-					logger.error(f"BASIC INFO SPLIT ERROR: {ip}--{e}")
+					logger.error(f"\t\tBASIC INFO SPLIT ERROR: {ip}--{e}")
 					continue
 
 				if len(FILE) >= 120:
@@ -82,7 +82,6 @@ def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
 							logger.error(e)
 
 					FILE = action_file1+action_file2+' *TRUNCATED*'
-					# logger.warning(f"\t\t{SOURCE} had too long requested file name, truncated")
 
 				try:
 					action2 = basic_info.split('"')[2].strip()
