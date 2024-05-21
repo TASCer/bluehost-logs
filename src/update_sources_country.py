@@ -25,6 +25,8 @@ def get():
     """Updates lookup table SOURCE entries with full country name and ASN Description"""
     logger: Logger = logging.getLogger(__name__)
 
+    http_errors = 0
+
     try:
         engine: Engine = create_engine(
             f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
@@ -35,7 +37,9 @@ def get():
 
     with engine.connect() as conn, conn.begin():
         logger.info("Updating lookup table with source country name and description via IPWhois")
+
         errors = 0
+
         try:
             sql_no_country: CursorResult = conn.execute(
                 text(f'''SELECT * from {SOURCES} WHERE COUNTRY = '' or COUNTRY is null;'''))
@@ -48,11 +52,21 @@ def get():
                 obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
                 result: dict = obj.lookup_rdap()
 
+            except ipwhois.HTTPLookupError as http:
+                http_errors += 1
+                http = str(http).split('&')[0]
+                conn.execute(text(f'''update {SOURCES} SET country = '{str(http)}' WHERE SOURCE = '{ip}';'''))
+                continue
+
             except (UnboundLocalError, ValueError, AttributeError, ipwhois.BaseIpwhoisException, ipwhois.ASNLookupError,
                     ipwhois.ASNParseError, ipwhois.ASNOriginLookupError, ipwhois.ASNRegistryError,
                     ipwhois.HostLookupError, ipwhois.HTTPLookupError) as e:
-                logger.exception(e)
-                errors += 1
+
+                error: str = str(e).split('http:')[0]
+                print(f"Non httplookup error: {error} {ip}")
+                logger.warning(f"Non httplookup error: {error} {ip}")
+
+                conn.execute(text(f'''update {SOURCES} SET country = '{error}' WHERE SOURCE = '{ip}';'''))
                 continue
 
             asn_description: str = result['asn_description']
