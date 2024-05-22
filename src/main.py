@@ -38,18 +38,8 @@ tascs_logs_historical_path = my_secrets.tascs_logs_historical_zipped
 remote_log_file_paths = [tascs_logs_path, hoa_logs_path, roadspies_logs_path]
 historical_remote_log_file_paths = [tascs_logs_historical_path]
 
-if __name__ == '__main__':
-	logger.info("Checking RDBMS Availability")
-	month_num: int | None = None
-	year: str | None = None
-	have_database: bool = db_checks.schema()
-	have_tables: bool = db_checks.tables()
 
-	if have_database and have_tables:
-		logger.info("RDBMS is available and ready")
-	else:
-		logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
-
+def main() -> None:
 	logger.info("***** STARTING LOG PROCESSING *****")
 
 	local_zipped_logfiles: set[str] = get_server_logs.secure_copy(remote_log_file_paths, month_num, year)
@@ -63,4 +53,21 @@ if __name__ == '__main__':
 	insert_activity.update(processed_logs, my_processed_logs)
 
 	logger.info("***** COMPLETED WEB LOG PROCESSING *****")
-	mailer.send_mail(f"Bluehost log processing complete. Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}")
+
+
+	# mailer.send_mail(f"Bluehost log processing complete. Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}")
+
+
+if __name__ == '__main__':
+	logger.info("Checking RDBMS Availability")
+	month_num: int | None = None
+	year: str | None = None
+	have_database: bool = db_checks.schema()
+	have_tables: bool = db_checks.tables()
+
+	if have_database and have_tables:
+		logger.info("RDBMS is available and ready")
+	else:
+		logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
+
+	main()
