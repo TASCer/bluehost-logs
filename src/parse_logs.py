@@ -64,6 +64,9 @@ def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
 					logger.error(f"\t\tBASIC INFO SPLIT ERROR: {ip}--{e}")
 					continue
 
+				if "'" in FILE:
+					FILE = FILE.replace("'", "")
+
 				if len(FILE) >= 120:
 					site_long_files.append(SOURCE)
 					all_long_files.append((server_timestamp, SOURCE))
@@ -116,6 +119,10 @@ def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
 					client_os = client[0]
 					CLIENT = client_os.replace(';', '')
 					client_format = client[1]
+
+				if "'" in CLIENT:
+					CLIENT = CLIENT.replace("'", "")
+					# print(CLIENT, SOURCE, server_timestamp)
 
 				site_sources.append(SOURCE)
 				all_sources.append(SOURCE)
