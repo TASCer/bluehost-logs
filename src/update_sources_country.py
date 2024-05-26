@@ -48,6 +48,10 @@ def get():
             logger.warning(str(e))
 
         for ip, country, code, desc in no_country:
+            if ":" in ip:
+                logger.warning(f"IPv6 source encountered {ip}")
+                continue
+
             try:
                 obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
                 result: dict = obj.lookup_rdap()
