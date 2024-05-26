@@ -49,19 +49,21 @@ def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
 				ip: str = basic.split("- - ")[0]
 				SOURCE: str = ip.rstrip()
 
-				# skip parsing system cron jobs on bluehost server
+				# skip parsing system cron jobs performed on bluehost server
 				if SOURCE == f'{my_secrets.bh_ip}':
 					continue
 
 				basic_info: str = basic.split("- - ")[1]
 				server_timestamp: str = basic_info.split(']')[0][1:]
 
+
+				action1: str = basic_info.split('"')[1]
+
 				try:
-					action1: str = basic_info.split('"')[1]
 					ACTION, FILE, TYPE = action1.split(' ')
 
 				except (ValueError, IndexError) as e:
-					logger.error(f"\t\tBASIC INFO SPLIT ERROR: {ip}--{e}")
+					logger.error(f"\tACTION1 INFO SPLIT ERROR: {action1}--{e}")
 					continue
 
 				if "'" in FILE:
@@ -104,7 +106,7 @@ def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
 				REF_IP: str = agent_list[-1].strip()
 				REF_URL: str = agent_list[-2]
 
-				# finds everything between all(    )
+				# finds all between (    )
 				client: list = re.findall("\((.*?)\)", log)
 
 				if not client:
@@ -122,7 +124,6 @@ def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
 
 				if "'" in CLIENT:
 					CLIENT = CLIENT.replace("'", "")
-					# print(CLIENT, SOURCE, server_timestamp)
 
 				site_sources.append(SOURCE)
 				all_sources.append(SOURCE)
