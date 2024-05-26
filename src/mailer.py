@@ -75,24 +75,24 @@ def send_mail(subject: str, attachment_path: object = None):
         msg.attach(part_basic)
 
     # NORMAL PORT 25 METHOD WORKING
-    # with smtplib.SMTP(mail_server, 25) as server:
-        # try:
-        #     server.sendmail(email_sender, email_reciever, msg.as_string())
-        #     logger.info("emil sent")
-        # except smtplib.SMTPException as e:
-        #     logger.exception(f"email not sent {str(e)}")
+    with smtplib.SMTP(mail_server, 25) as server:
+        try:
+            server.sendmail(email_sender, email_reciever, msg.as_string())
+            logger.info("emil sent")
+        except smtplib.SMTPException as e:
+            logger.exception(f"email not sent {str(e)}")
 
     # PORT 587 w/auth sasl_method = PLAIN phpmailer has it LOGIN
-    try:
-        with smtplib.SMTP(mail_server, 587, local_hostname= 'tascslt.tascs.local') as server:
-            server.ehlo()
-            server.starttls()
-            server.login(email_user, email_password)
-            server.sendmail(email_sender, email_reciever, msg.as_string())
-            logger.info("email sent")
-
-    except (smtplib.SMTPException) as e:
-        logger.exception(f"{str(e)}")
+    # try:
+    #     with smtplib.SMTP(mail_server, 587, local_hostname= 'tascslt.tascs.local') as server:
+    #         server.ehlo()
+    #         server.starttls()
+    #         server.login(email_user, email_password)
+    #         server.sendmail(email_sender, email_reciever, msg.as_string())
+    #         logger.info("email sent")
+    #
+    # except (smtplib.SMTPException) as e:
+    #     logger.exception(f"{str(e)}")
 
 
 
