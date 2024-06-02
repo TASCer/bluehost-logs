@@ -1,15 +1,14 @@
-# TODO create db backups?
 import datetime as dt
 import db_checks
 import get_server_logs
+import insert_activity
+import insert_unique_sources
 import logging
 import mailer
 import my_secrets
 import parse_logs
-import insert_activity
 import unzip_server_logs
 import update_sources_country
-import insert_unique_sources
 
 from logging import Logger, Formatter
 
@@ -29,7 +28,7 @@ root_logger.addHandler(fh)
 
 logger: Logger = logging.getLogger(__name__)
 
-# SERVER log paths less month-year
+# REMOTE BLUEHOST LOG PATHS EXCEPT month-year
 tascs_logs_path = my_secrets.tascs_logs_zipped
 hoa_logs_path = my_secrets.hoa_logs_zipped
 roadspies_logs_path = my_secrets.roadspies_logs_zipped
@@ -54,8 +53,7 @@ def main() -> None:
 
 	logger.info("***** COMPLETED WEB LOG PROCESSING *****")
 
-
-	# mailer.send_mail(f"Bluehost log processing complete. Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}")
+	mailer.send_mail(f"Bluehost log processing complete. Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}")
 
 
 if __name__ == '__main__':
