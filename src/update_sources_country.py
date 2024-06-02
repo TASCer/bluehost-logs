@@ -14,7 +14,7 @@ from typing import Optional
 now: datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
-# SQL TABLE constants
+# SQL TABLES
 LOGS = 'logs'
 SOURCES = 'sources'
 
