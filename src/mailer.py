@@ -75,26 +75,24 @@ def send_mail(subject: str, attachment_path: object = None):
         msg.attach(part_basic)
 
     # NORMAL PORT 25 METHOD WORKING
-    with smtplib.SMTP(mail_server, 25) as server:
-        try:
-            server.sendmail(email_sender, email_reciever, msg.as_string())
-            logger.info("emil sent")
-        except smtplib.SMTPException as e:
-            logger.exception(f"email not sent {str(e)}")
+    # with smtplib.SMTP(mail_server, 25) as server:
+    #     try:
+    #         server.sendmail(email_sender, email_reciever, msg.as_string())
+    #         logger.info("emil sent")
+    #     except smtplib.SMTPException as e:
+    #         logger.exception(f"email not sent {str(e)}")
 
     # PORT 587 w/auth sasl_method = PLAIN phpmailer has it LOGIN
-    # try:
-    #     with smtplib.SMTP(mail_server, 587, local_hostname= 'tascslt.tascs.local') as server:
-    #         server.ehlo()
-    #         server.starttls()
-    #         server.login(email_user, email_password)
-    #         server.sendmail(email_sender, email_reciever, msg.as_string())
-    #         logger.info("email sent")
-    #
-    # except (smtplib.SMTPException) as e:
-    #     logger.exception(f"{str(e)}")
+    try:
+        with smtplib.SMTP(mail_server, 587, local_hostname= 'tascslt.tascs.local') as server:
+            server.ehlo()
+            server.starttls()
+            server.login(email_user, email_password)
+            server.sendmail(email_sender, email_reciever, msg.as_string())
+            logger.info("email sent")
 
-
+    except (smtplib.SMTPException) as e:
+        logger.exception(f"{str(e)}")
 
  #################################### SSL MODULE TESTING [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:997)  1123 on RPI4
     # print(ssl.OPENSSL_VERSION)
@@ -103,16 +101,21 @@ def send_mail(subject: str, attachment_path: object = None):
     # context.get_ca_certs()
     # # context.options |= ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3  # Disable SSLv2 and SSLv3
     #
-    # try:
-    #     with smtplib.SMTP_SSL(mail_server, 587, local_hostname='tascslt.tascs.local', context=context) as server:
-    #         server.ehlo()
-    #         server.starttls()
-    #         server.login(my_secrets.postfix_user, my_secrets.postfix_password)
-    #         server.sendmail(my_secrets.mail_from, email_reciever, msg.as_string())
-    #         logger.info("emil sent")
-    #
-    # except (smtplib.SMTPException) as e:
-    #     logger.exception(f"{str(e)}")
+#     try:
+#         with smtplib.SMTP_SSL(mail_server, 587, local_hostname='tascslt.tascs.local', context=context) as server:
+#             server.ehlo()
+#             server.starttls()
+#             server.login(my_secrets.postfix_user, my_secrets.postfix_password)
+#             server.sendmail(my_secrets.mail_from, email_reciever, msg.as_string())
+#             logger.info("emil sent")
+#
+#     except (smtplib.SMTPException) as e:
+#         logger.exception(f"{str(e)}")
+#
+# send_mail("TEST FROM VH LOGS w/SSL CONTEXT")
+
+
+
 
  # cert = ssl.get_server_certificate(addr=('tascs.test', 587))#, ssl_version=3, ca_certs=None)
     # print(ciphers)
