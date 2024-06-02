@@ -13,7 +13,7 @@ now: dt = dt.date.today()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
 
-def secure_copy(paths: list[str], *args) -> set:
+def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 	"""
 	Takes in a list of paths for location of website log files
 	If historical
@@ -62,10 +62,13 @@ def secure_copy(paths: list[str], *args) -> set:
 
 			except os.error:
 				try:
-					# TRY AGAIN WITH PSCP LOGGING
+					# TRY AGAIN AND LOG TO FILE
 					ret_value = os.system(f"pscp -batch -sshlog pscp_errors_{todays_date} -logappend {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}")
 					if ret_value == 1:
 						raise os.error
+
+				except FileNotFoundError as file_e:
+					logger.critical(f"File not found - {file_e}")
 
 				except OSError:
 					logger.critical(f"Remote pscp issue: {local_unzipped_filename}")
@@ -73,10 +76,5 @@ def secure_copy(paths: list[str], *args) -> set:
 					mailer.send_mail(f"BH-WEBLOGS ERROR - pscp copy. Check log: pscp_errors_{todays_date}", f'../log_{todays_date}.log')
 
 					return unzipped_paths
-
-				except FileNotFoundError as file_e:
-					logger.critical(f"File not found - {file_e}")
-
-
 
 	return unzipped_paths
