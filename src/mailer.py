@@ -82,19 +82,23 @@ def send_mail(subject: str, attachment_path: object = None):
     #     except smtplib.SMTPException as e:
     #         logger.exception(f"email not sent {str(e)}")
 
-    # PORT 587 w/auth sasl_method = PLAIN phpmailer has it LOGIN
+    # PORT 587 w/auth sasl_method = PLAIN phpmailer has it LOG IN
     try:
         with smtplib.SMTP(mail_server, 587, local_hostname= 'tascslt.tascs.local') as server:
             server.ehlo()
             server.starttls()
-            server.login(email_user, email_password)
+            try:
+                server.login(email_user, email_password)
+            except smtplib.SMTPAuthenticationError as login_err:
+                logger.error(f"{login_err}")
+
             server.sendmail(email_sender, email_reciever, msg.as_string())
             logger.info("email sent")
 
-    except (smtplib.SMTPException) as e:
-        logger.exception(f"{str(e)}")
+    except (smtplib.SMTPException) as err:
+        logger.exception(f"{str(err)}")
 
- #################################### SSL MODULE TESTING [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:997)  1123 on RPI4
+# SSL MODULE TESTING [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:997)  1123 on RPI4
     # print(ssl.OPENSSL_VERSION)
     # context = ssl.create_default_context(purpose=Purpose.SERVER_AUTH)
     # context.get_ciphers()
@@ -113,9 +117,6 @@ def send_mail(subject: str, attachment_path: object = None):
 #         logger.exception(f"{str(e)}")
 #
 # send_mail("TEST FROM VH LOGS w/SSL CONTEXT")
-
-
-
 
  # cert = ssl.get_server_certificate(addr=('tascs.test', 587))#, ssl_version=3, ca_certs=None)
     # print(ciphers)

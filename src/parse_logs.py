@@ -56,7 +56,6 @@ def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
 				basic_info: str = basic.split("- - ")[1]
 				server_timestamp: str = basic_info.split(']')[0][1:]
 
-
 				action1: str = basic_info.split('"')[1]
 
 				try:
@@ -144,6 +143,9 @@ def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
 			if len(site_long_files) >= 1:
 				logger.warning(f"\t\t{len(site_long_files)} long file names encountered.")
 
-	logger.warning(f"\t\t{len(all_long_files)} LOG ENTRIES HAD FILE NAME OVER 120 chars.")
+	if len(all_long_files) > 0:
+		logger.warning(f"\t\t{len(all_long_files)} LOG ENTRIES HAD FILE NAME OVER 120 chars.")
+
+	logger.info("***** COMPLETED WEBLOG PROCESSING *****")
 
 	return all_sources, all_log_entries, all_my_log_entries

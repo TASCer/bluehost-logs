@@ -21,10 +21,13 @@ def process(files: set[str], *args: tuple[str, str] | None) -> set[str]:
 	arg: year
 	returns: set
 	"""
+	logger.info("***** STARTED: UNZIPPING AND SAVING WEBLOGS *****")
 
 	local_files = set()
 
+
 	for file in files:
+
 		# month_num = now.month
 		month_name = now.strftime('%b')
 		year = str(now.year)
@@ -40,5 +43,7 @@ def process(files: set[str], *args: tuple[str, str] | None) -> set[str]:
 			local_file = None
 
 		local_files.add(local_file)
+
+	logger.info("***** COMPLETED: UNZIPPING AND SAVING WEBLOGS *****")
 
 	return local_files

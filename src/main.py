@@ -39,7 +39,7 @@ historical_remote_log_file_paths = [tascs_logs_historical_path]
 
 
 def main() -> None:
-	logger.info("***** STARTING LOG PROCESSING *****")
+	logger.info("***** STARTING WEBLOG PROCESSING *****")
 
 	local_zipped_logfiles: set[str] = get_server_logs.secure_copy(remote_log_file_paths, month_num, year)
 	local_unzipped_logfiles: set[str] = unzip_server_logs.process(local_zipped_logfiles)

@@ -36,7 +36,7 @@ def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 		month_name = now.strftime('%b')
 		year = str(now.year)
 
-	logger.info("Copying site log files from remote web server")
+	logger.info("STARTED: Copying site log files from remote web server")
 
 	for path in paths:
 		remote_zipped_filename = path+month_name+'-'+year+'.gz'
@@ -76,5 +76,7 @@ def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 					mailer.send_mail(f"BH-WEBLOGS ERROR - pscp copy. Check log: pscp_errors_{todays_date}", f'../log_{todays_date}.log')
 
 					return unzipped_paths
+
+	logger.info("COMPLETED: Copying site log files from remote web server")
 
 	return unzipped_paths
