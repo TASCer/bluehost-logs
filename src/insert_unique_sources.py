@@ -16,17 +16,19 @@ SOURCES = 'sources'
 
 
 def update(unique_ips: set) -> None:
-    """Takes in list of unique source ip addresses and updates lookup table
-        to have country name and descryption added later"""
+    """
+    Updates lookup table with unique sources
+    :param: set
+    """
     logger: Logger = logging.getLogger(__name__)
+
     try:
         engine: Engine = create_engine(f"mysql+pymysql://{my_secrets.dbuser}:{my_secrets.dbpass}@{my_secrets.dbhost}/{my_secrets.dbname}")
 
     except exc.SQLAlchemyError as e:
         logger.critical(str(e))
-        # engine = None
         exit()
 
     with engine.connect() as conn, conn.begin():
         for ip in unique_ips:
-            ins_sql: str = conn.execute(text(f'''INSERT IGNORE into {SOURCES} values('{ip}', '', '', '');'''))
+            conn.execute(text(f'''INSERT IGNORE into {SOURCES} values('{ip}', '', '', '');'''))
