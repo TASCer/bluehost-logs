@@ -126,7 +126,9 @@ def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
 
 				site_sources.append(SOURCE)
 				all_sources.append(SOURCE)
-				entry = LogEntry(SOURCE, server_timestamp, ACTION, FILE, TYPE, REF_URL, REF_IP, RES_CODE, SIZE, AGENT, CLIENT)
+				entry = LogEntry(server_timestamp=server_timestamp, SOURCE=SOURCE, ACTION=ACTION, FILE=FILE, TYPE=TYPE,
+								 REF_URL=REF_URL, REF_IP=REF_IP, RES_CODE=RES_CODE,
+								 SIZE=SIZE, AGENT=AGENT, CLIENT=CLIENT)
 
 				if SOURCE == my_secrets.home_ip:
 					all_my_log_entries.append(entry)
