@@ -15,6 +15,7 @@ DB_HOSTNAME = f'{my_secrets.dbhost}'
 DB_NAME = f'{my_secrets.dbname}'
 DB_USER = f'{my_secrets.dbuser}'
 DB_PW = f'{my_secrets.dbpass}'
+
 # SQL TABLE constants
 LOGS = 'logs'
 SOURCES = 'sources'
@@ -38,9 +39,10 @@ def schema():
 
 
 def tables():
-	"""Check to see if all CONSTANT tables are created
-		If not, create them and return True
-		Returns False if error in creating
+	"""
+	Check to see if all CONSTANT tables are created
+	If not, create them and return True
+	Returns False and logs error if issue
     """
 	logger: Logger = logging.getLogger(__name__)
 
@@ -63,7 +65,6 @@ def tables():
 		try:
 			logs = Table(
 				LOGS, meta,
-				# Column('id', types.Integer, primary_key=True, autoincrement=True),
 				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True, nullable=False),
 				Column('SOURCE', types.VARCHAR(15), ForeignKey("sources.SOURCE"), nullable=False),
 				Column('CLIENT', types.VARCHAR(200), primary_key=True, nullable=False),
@@ -86,7 +87,6 @@ def tables():
 		try:
 			my_logs = Table(
 				MY_LOGS, meta,
-				# Column('id', types.Integer, primary_key=True, autoincrement=True),
 				Column('ACCESSED', types.TIMESTAMP(timezone=True), primary_key=True, nullable=False),
 				Column('SOURCE', types.VARCHAR(15), ForeignKey("sources.SOURCE"), nullable=False),
 				Column('CLIENT', types.VARCHAR(200), primary_key=True, nullable=False),
