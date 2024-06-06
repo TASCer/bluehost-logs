@@ -45,13 +45,23 @@ def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 
 		unzipped_paths.add(local_unzipped_filename)
 
-		# COPY DOWN FROM BLUEHOST SERVER DEPENDING ON PLATFORM
+		# COPY FROM REMOTE BLUEHOST SERVER DEPENDING ON PLATFORM
 		if not platform.system() == 'Windows':
 			try:
-				os.system(f'scp {path} {my_secrets.local_zipped_path}')
-				logger.info(f"{path} {my_secrets.local_zipped_path} retrieved from bh server")
-			except (BaseException, FileNotFoundError) as e:
-				logger.critical(f"{path} LOG NOT RETRIEVED. Investigate {e}")
+				os.system(f'scp {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}')
+				logger.info(f"{path} {my_secrets.local_zipped_path} retrieved from bluehost server")
+
+				# raise OSError
+
+			except OSError:
+				logger.critical(f"Remote scp issue: {local_unzipped_filename}")
+				logger.critical(f"see: scp_errors_{todays_date} for more information")
+				mailer.send_mail(f"BH-WEBLOGS ERROR - scp copy. Check log: scp_errors_{todays_date}", f'../log_{todays_date}.log')
+
+				return unzipped_paths
+
+			except FileNotFoundError as file_e:
+				logger.critical(f"File not found - {file_e}")
 
 		else:
 			try:
@@ -62,7 +72,7 @@ def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 
 			except os.error:
 				try:
-					# TRY AGAIN AND LOG TO FILE
+					# TRY AGAIN AND CREATE DETAILED LOGFILE
 					ret_value = os.system(f"pscp -batch -sshlog pscp_errors_{todays_date} -logappend {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}")
 					if ret_value == 1:
 						raise os.error
