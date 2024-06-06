@@ -51,7 +51,8 @@ def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 				os.system(f'scp {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}')
 				logger.info(f"{path} {my_secrets.local_zipped_path} retrieved from bluehost server")
 
-				# raise OSError
+			except FileNotFoundError as file_e:
+				logger.critical(f"File not found - {file_e}")
 
 			except OSError:
 				logger.critical(f"Remote scp issue: {local_unzipped_filename}")
@@ -59,9 +60,6 @@ def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 				mailer.send_mail(f"BH-WEBLOGS ERROR - scp copy. Check log: scp_errors_{todays_date}", f'../log_{todays_date}.log')
 
 				return unzipped_paths
-
-			except FileNotFoundError as file_e:
-				logger.critical(f"File not found - {file_e}")
 
 		else:
 			try:
