@@ -40,7 +40,7 @@ def update(log_entries: list, my_log_entries: list) -> None:
         exit()
 
     with engine.connect() as conn, conn.begin():
-        for ip, ts, action, file, conn_type, ref_url, ref_ip, action_code, action_size, agent_name, client in log_entries:
+        for ts, ip, client, agent_name, action, file, conn_type, action_code, action_size, ref_url, ref_ip in log_entries:
             ts_parsed = parse_timestamp(ts)
 
             try:
@@ -51,7 +51,7 @@ def update(log_entries: list, my_log_entries: list) -> None:
     logger.info(f"{len(log_entries)} entries added to {LOGS} table")
 
     with engine.connect() as conn, conn.begin():
-        for ip, ts, action, file, conn_type, ref_url, ref_ip, action_code, action_size, agent_name, client in my_log_entries:
+        for ts, ip, client, agent_name, action, file, conn_type, action_code, action_size, ref_url, ref_ip in my_log_entries:
             ts_parsed = parse_timestamp(ts)
 
             try:
