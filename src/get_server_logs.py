@@ -4,6 +4,9 @@ import mailer
 import my_secrets
 import os
 import platform
+import subprocess
+import time
+
 
 from logging import Logger
 
@@ -43,13 +46,12 @@ def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 
 		local_unzipped_filename = remote_zipped_filename.split("/")[1]
 
-		unzipped_paths.add(local_unzipped_filename)
-
 		# COPY FROM REMOTE BLUEHOST SERVER DEPENDING ON PLATFORM
 		if not platform.system() == 'Windows':
 			try:
 				os.system(f'scp {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}')
 				logger.info(f"{path} {my_secrets.local_zipped_path} retrieved from bluehost server")
+				unzipped_paths.add(local_unzipped_filename)
 
 			except FileNotFoundError as file_e:
 				logger.critical(f"File not found - {file_e}")
@@ -63,27 +65,20 @@ def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 
 		else:
 			try:
-				ret_value = os.system(f"pscp -batch {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}")
-				if ret_value == 1:
+				copy_command = f"pscp -batch {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}"
+				result = subprocess.check_output(copy_command)
+				time.sleep(3)
+				str_result = result.decode(encoding="utf-8")
+				logger.info(str_result.strip())
+				unzipped_paths.add(local_unzipped_filename)
 
-					raise os.error
+			except subprocess.CalledProcessError as other_err:
+				logger.error(other_err)
+				# continue
 
-			except os.error:
-				try:
-					# TRY AGAIN AND CREATE DETAILED LOGFILE
-					ret_value = os.system(f"pscp -batch -sshlog pscp_errors_{todays_date} -logappend {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}")
-					if ret_value == 1:
-						raise os.error
-
-				except FileNotFoundError as file_e:
-					logger.critical(f"File not found - {file_e}")
-
-				except OSError:
-					logger.critical(f"Remote pscp issue: {local_unzipped_filename}")
-					logger.critical(f"see: pscp_errors_{todays_date} for more information")
-					mailer.send_mail(f"BH-WEBLOGS ERROR - pscp copy. Check log: pscp_errors_{todays_date}", f'../log_{todays_date}.log')
-
-					return unzipped_paths
+			except FileNotFoundError as file_e:
+				logger.critical(f"File not found - {file_e}")
+				continue
 
 	logger.info("COMPLETED: Copying site log files from remote web server")
 
