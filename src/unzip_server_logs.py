@@ -23,14 +23,37 @@ def process(files: set[str], *args: tuple[str, str] | None) -> set[str]:
 	"""
 	logger.info("***** STARTED: UNZIPPING AND SAVING WEBLOGS *****")
 
+	try:
+		month_num, year = args
+
+	except Exception as e:
+		month_num = now.month
+		month_name = now.strftime('%b')
+		year = str(now.year)
+
+
+
+
+	# if None not in args:
+	# 	month_num, year = args
+	# 	dt_string = f"{year}-{month_num}-01"
+	# 	dt_obj = dt.datetime.strptime(dt_string, '%Y-%m-%d')
+	# 	month_name = dt_obj.strftime('%b')
+	# 	year = str(year)
+	#
+	# else:
+	# 	month_num = now.month
+	# 	month_name = now.strftime('%b')
+	# 	year = str(now.year)
+
 	local_files = set()
 
 
 	for file in files:
 
 		# month_num = now.month
-		month_name = now.strftime('%b')
-		year = str(now.year)
+		# month_name = now.strftime('%b')
+		# year = str(now.year)
 
 		try:
 			local_file = file.split('.')[0]
