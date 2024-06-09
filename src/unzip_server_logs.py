@@ -11,7 +11,7 @@ logger: Logger = logging.getLogger(__name__)
 now: datetime = dt.datetime.now()
 
 
-def process(files: set[str], *args: tuple[str, str] | None) -> set[str]:
+def process(files: set[str], month_name: str | None, year: int | None) -> set[str]:
 	"""
 	Takes in a set of str paths for locally copied zipped bluehost website log files
 	Unzips file and saves to file
@@ -23,37 +23,18 @@ def process(files: set[str], *args: tuple[str, str] | None) -> set[str]:
 	"""
 	logger.info("***** STARTED: UNZIPPING AND SAVING WEBLOGS *****")
 
-	try:
-		month_num, year = args
+	if year and month_name:
+		month_name = month_name
+		year = year
 
-	except Exception as e:
-		month_num = now.month
+	else:
+		# month_num = now.month
 		month_name = now.strftime('%b')
 		year = str(now.year)
 
-
-
-
-	# if None not in args:
-	# 	month_num, year = args
-	# 	dt_string = f"{year}-{month_num}-01"
-	# 	dt_obj = dt.datetime.strptime(dt_string, '%Y-%m-%d')
-	# 	month_name = dt_obj.strftime('%b')
-	# 	year = str(year)
-	#
-	# else:
-	# 	month_num = now.month
-	# 	month_name = now.strftime('%b')
-	# 	year = str(now.year)
-
 	local_files = set()
 
-
 	for file in files:
-
-		# month_num = now.month
-		# month_name = now.strftime('%b')
-		# year = str(now.year)
 
 		try:
 			local_file = file.split('.')[0]

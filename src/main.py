@@ -40,34 +40,22 @@ remote_log_file_paths = [tascs_logs_path, hoa_logs_path, roadspies_logs_path]
 historical_remote_log_file_paths = [tascs_logs_historical_path]
 
 
-print("\n".join(sys.argv))
+def main(month_num: int | None, year: int | None) -> None:
 
+	if year and month_num:
+		dt_string: str = f"{year}-{month_num}-01"
+		dt_obj = dt.datetime.strptime(dt_string, '%Y-%m-%d')
+		month_name: str = dt_obj.strftime('%b')
+		year = str(year)
 
-def main(*args: tuple[str, str] | None) -> None:
-
-	try:
-		month_num, year = args
-	except Exception as e:
-
-		# print(e)
-
-	# if None not in args:
-	# 	month_num, year = args
-	# 	dt_string = f"{year}-{month_num}-01"
-	# 	dt_obj = dt.datetime.strptime(dt_string, '%Y-%m-%d')
-	# 	month_name = dt_obj.strftime('%b')
-	# 	year = str(year)
-
-	# else:
-		month_num = now.month
+	else:
 		month_name = now.strftime('%b')
 		year = str(now.year)
 
+	local_zipped_logfiles: set[str] = get_server_logs.secure_copy(remote_log_file_paths, month_name, year)
+	local_unzipped_logfiles: set[str] = unzip_server_logs.process(local_zipped_logfiles, month_name, year)
 
-	local_zipped_logfiles: set[str] = get_server_logs.secure_copy(remote_log_file_paths, month_num, year)
-	local_unzipped_logfiles: set[str] = unzip_server_logs.process(local_zipped_logfiles)
-
-	ips, processed_logs, my_processed_logs = parse_logs.process(local_unzipped_logfiles)
+	ips, processed_logs, my_processed_logs = parse_logs.process(local_unzipped_logfiles, month_name, year)
 
 	unique_sources: set = set(ips)
 	insert_unique_sources.update(unique_sources)
@@ -90,12 +78,10 @@ if __name__ == '__main__':
 		logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
 	logger.info("***** STARTING WEBLOG PROCESSING *****")
 
-	parser = argparse.ArgumentParser(description='Do all the things')
-	parser.add_argument('--month_num', type=int,
-						help='month number (i.e. Jan==1')
-	parser.add_argument('--year', type=str,
-						help='year number (i.e. "2022"')
+	parser = argparse.ArgumentParser(description='One-Off month/year orocessing')
+	parser.add_argument('-m', "--month_num", type=int, choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], help="Enter a Month number: 1-12")   # action='store_true'
+	parser.add_argument('-y', "--year", type=int, choices=[2015, 2022, 2023], help="Enter a Month number: 1-12")   # action='store_true'
+
 	args = parser.parse_args()
 
-
-	main(args)
+	main(**vars(args))

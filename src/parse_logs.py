@@ -30,7 +30,7 @@ class LogEntry(NamedTuple):
     REF_IP: str
 
 
-def process(log_paths: set) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
+def process(log_paths: set, month_name: str | None, year: int | None) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
     all_log_entries: list = []
     all_my_log_entries: list = []
     all_sources: list = []
