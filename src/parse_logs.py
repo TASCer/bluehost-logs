@@ -11,6 +11,7 @@ logger: Logger = logging.getLogger(__name__)
 now: dt.datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
+
 class LogEntry(NamedTuple):
     server_timestamp: str
     SOURCE: str
@@ -109,7 +110,7 @@ def process(log_paths: set, month_name: str | None, year: str | None) -> Tuple[l
                 REF_URL: str = agent_list[-2]
 
                 # finds all between (    )
-                client: list = re.findall("\((.*?)\)", log)
+                client: list = re.findall(r"\((.*?)\)", log)
 
                 if not client:
                     CLIENT, client_format = 2 * ('NA',)
