@@ -63,7 +63,7 @@ def main(month_num: int | None, year: int | None) -> None:
 
 	logger.info("***** COMPLETED WEB LOG PROCESSING *****")
 
-	# mailer.send_mail(f"Bluehost log processing complete. Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}")
+	mailer.send_mail(f"Bluehost log processing complete. Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}")
 
 
 if __name__ == '__main__':
