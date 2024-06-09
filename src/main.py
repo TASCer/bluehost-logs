@@ -8,7 +8,6 @@ import logging
 import mailer
 import my_secrets
 import parse_logs
-import sys
 import unzip_server_logs
 import update_sources_country
 

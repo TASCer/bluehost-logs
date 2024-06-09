@@ -5,8 +5,6 @@ import my_secrets
 import os
 import platform
 import subprocess
-import time
-
 
 from logging import Logger
 
@@ -16,7 +14,7 @@ now: dt = dt.date.today()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
 
-def secure_copy(paths: list[str], month_name: str | None, year: int | None) -> set:
+def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> set:
 	"""
 	Takes in a list of paths for location of website log files
 	If historical
@@ -63,14 +61,12 @@ def secure_copy(paths: list[str], month_name: str | None, year: int | None) -> s
 			try:
 				copy_command = f"pscp -batch {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}"
 				result = subprocess.check_output(copy_command)
-				# time.sleep(3)
 				str_result = result.decode(encoding="utf-8")
 				logger.info(str_result.strip())
 				unzipped_paths.add(local_unzipped_filename)
 
 			except subprocess.CalledProcessError as other_err:
 				logger.error(other_err)
-				# continue
 
 			except FileNotFoundError as file_e:
 				logger.critical(f"File not found - {file_e}")

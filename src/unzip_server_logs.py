@@ -11,7 +11,7 @@ logger: Logger = logging.getLogger(__name__)
 now: datetime = dt.datetime.now()
 
 
-def process(files: set[str], month_name: str | None, year: int | None) -> set[str]:
+def process(files: set[str], month_name: str | None, year: str | None) -> set[str]:
 	"""
 	Takes in a set of str paths for locally copied zipped bluehost website log files
 	Unzips file and saves to file
@@ -28,7 +28,6 @@ def process(files: set[str], month_name: str | None, year: int | None) -> set[st
 		year = year
 
 	else:
-		# month_num = now.month
 		month_name = now.strftime('%b')
 		year = str(now.year)
 

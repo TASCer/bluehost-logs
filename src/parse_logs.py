@@ -11,11 +11,6 @@ logger: Logger = logging.getLogger(__name__)
 now: dt.datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
-month_num: int = now.month
-month_name: str = now.strftime('%b')
-year: str = str(now.year)
-
-
 class LogEntry(NamedTuple):
     server_timestamp: str
     SOURCE: str
@@ -30,11 +25,19 @@ class LogEntry(NamedTuple):
     REF_IP: str
 
 
-def process(log_paths: set, month_name: str | None, year: int | None) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
+def process(log_paths: set, month_name: str | None, year: str | None) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
     all_log_entries: list = []
     all_my_log_entries: list = []
     all_sources: list = []
     all_long_files: list = []
+
+    if year and month_name:
+        month_name = month_name
+        year = year
+
+    else:
+        month_name = now.strftime('%b')
+        year = str(now.year)
 
     for p in log_paths:
         logger.info(f"Processing: {p}")
