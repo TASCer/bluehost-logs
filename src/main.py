@@ -79,8 +79,8 @@ if __name__ == '__main__':
 	logger.info("***** STARTING WEBLOG PROCESSING *****")
 
 	parser = argparse.ArgumentParser(description='One-Off month/year orocessing')
-	parser.add_argument('-m', "--month_num", type=int, choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], help="Enter a Month number: 1-12")   # action='store_true'
-	parser.add_argument('-y', "--year", type=int, choices=[2015, 2022, 2023], help="Enter a Month number: 1-12")   # action='store_true'
+	parser.add_argument('-m', "--month_num", type=int, choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], help="Enter a Month number: 1-12")
+	parser.add_argument('-y', "--year", type=int, choices=[2019, 2020, 2021, 2022, 2023, 2024], help="Enter full year i.e: 2022")
 
 	args = parser.parse_args()
 
