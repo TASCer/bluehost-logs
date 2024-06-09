@@ -16,7 +16,7 @@ now: dt = dt.date.today()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
 
-def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
+def secure_copy(paths: list[str], month_name: str | None, year: int | None) -> set:
 	"""
 	Takes in a list of paths for location of website log files
 	If historical
@@ -24,18 +24,14 @@ def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 	param: month
 	param: year
 	"""
-	month_num, year = args
+
 	unzipped_paths = set()
 
-	if None not in args:
-		month_num, year = args
-		dt_string = f"{year}-{month_num}-01"
-		dt_obj = dt.datetime.strptime(dt_string, '%Y-%m-%d')
-		month_name = dt_obj.strftime('%b')
-		year = str(year)
+	if year and month_name:
+		month_name = month_name
+		year = year
 
 	else:
-		month_num = now.month
 		month_name = now.strftime('%b')
 		year = str(now.year)
 
@@ -67,7 +63,7 @@ def secure_copy(paths: list[str], *args: tuple[str, str] | None) -> set:
 			try:
 				copy_command = f"pscp -batch {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}"
 				result = subprocess.check_output(copy_command)
-				time.sleep(3)
+				# time.sleep(3)
 				str_result = result.decode(encoding="utf-8")
 				logger.info(str_result.strip())
 				unzipped_paths.add(local_unzipped_filename)
