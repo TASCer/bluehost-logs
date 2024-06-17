@@ -8,3 +8,4 @@
 /.env
 /issues
 /output/*
+/__pycache__/*
