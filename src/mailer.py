@@ -23,7 +23,7 @@ email_user = my_secrets.postfix_user
 email_password = my_secrets.postfix_password
 
 
-def send_mail(subject: str, attachment_path: object = None):
+def send_mail(subject: str, text: str, attachment_path: object = None):
     """ Takes a subject (str) and optional file attachment
         Sends email to receiver_email contacts
     """
@@ -60,10 +60,11 @@ def send_mail(subject: str, attachment_path: object = None):
             msg.attach(part_attachments)
             msg.attach(html)
     else:
-        html_basic: str = """\
+        html_basic: str = f"""\
             <html>
               <body>
-                <p><b>Python Bluehost Log Parser Report</b>
+                <p>{text}
+                <p><b>Python Bluehost WebLog Report</b>
                 <br>
                    Visit <a href="https://www.tascs.test">TASCS</a> 
                    for more information.
@@ -73,7 +74,6 @@ def send_mail(subject: str, attachment_path: object = None):
             """
         part_basic: MIMEText = MIMEText(html_basic, "html")
         msg.attach(part_basic)
-
     # NORMAL PORT 25 METHOD WORKING
     # with smtplib.SMTP(mail_server, 25) as server:
     #     try:
@@ -83,6 +83,7 @@ def send_mail(subject: str, attachment_path: object = None):
     #         logger.exception(f"email not sent {str(e)}")
 
     # PORT 587 w/auth sasl_method = PLAIN phpmailer has it LOG IN
+
     try:
         with smtplib.SMTP(mail_server, 587, local_hostname= 'tascslt.tascs.local') as server:
             server.ehlo()
@@ -116,7 +117,7 @@ def send_mail(subject: str, attachment_path: object = None):
 #     except (smtplib.SMTPException) as e:
 #         logger.exception(f"{str(e)}")
 #
-# send_mail("TEST FROM VH LOGS w/SSL CONTEXT")
+# send_mail(f"Bluehost log processing complete. Public: 2 - SOHO: 2)", "test")
 
  # cert = ssl.get_server_certificate(addr=('tascs.test', 587))#, ssl_version=3, ca_certs=None)
     # print(ciphers)
