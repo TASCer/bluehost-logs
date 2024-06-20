@@ -41,7 +41,7 @@ def process(log_paths: set, month_name: str | None, year: str | None) -> Tuple[l
         year = str(now.year)
 
     for p in log_paths:
-        logger.info(f"Processing: {p}")
+        logger.info(f"Parsing {p} logs")
         with open(f'{my_secrets.local_unzipped_path}{p}_{month_name}-{year}') as logs:
             site_log_entries: list = []
             site_sources: list = []
@@ -152,6 +152,6 @@ def process(log_paths: set, month_name: str | None, year: str | None) -> Tuple[l
     if len(all_long_files) > 0:
         logger.warning(f"\t\t{len(all_long_files)} LOG ENTRIES HAD FILE NAME OVER 120 chars.")
 
-    logger.info("***** COMPLETED WEBLOG PROCESSING *****")
+    logger.info("COMPLETED WEBLOG PARSING")
 
     return all_sources, all_log_entries, all_my_log_entries
