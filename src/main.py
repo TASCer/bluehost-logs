@@ -43,13 +43,13 @@ def main(month_num: int | None, year: int | None) -> None:
 
 	if year and month_num:
 		dt_string: str = f"{year}-{month_num}-01"
-		dt_obj = dt.datetime.strptime(dt_string, '%Y-%m-%d')
+		dt_obj: dt = dt.datetime.strptime(dt_string, '%Y-%m-%d')
 		month_name: str = dt_obj.strftime('%b')
-		year = str(year)
+		year: str = str(year)
 
 	else:
-		month_name = now.strftime('%b')
-		year = str(now.year)
+		month_name: str = now.strftime('%b')
+		year: str = str(now.year)
 
 	local_zipped_logfiles: set[str] = get_server_logs.secure_copy(remote_log_file_paths, month_name, year)
 	local_unzipped_logfiles: set[str] = unzip_server_logs.process(local_zipped_logfiles, month_name, year)
@@ -63,7 +63,7 @@ def main(month_num: int | None, year: int | None) -> None:
 
 	logger.info("***** COMPLETED WEB LOG PROCESSING *****")
 
-	mailer.send_mail(f"Bluehost log processing complete. Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}")
+	mailer.send_mail(f"BH WebLog Processing Complete", f"Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}")
 
 
 if __name__ == '__main__':
