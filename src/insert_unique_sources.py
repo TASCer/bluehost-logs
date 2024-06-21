@@ -11,7 +11,6 @@ now: datetime = dt.datetime.now()
 todays_date: str = now.strftime('%D').replace('/', '-')
 
 # SQL TABLE constants
-LOGS = 'logs'
 SOURCES = 'sources'
 
 
