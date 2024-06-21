@@ -44,16 +44,18 @@ def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> s
 		if not platform.system() == 'Windows':
 			# TESTED WORKING ON RPI4
 			try:
-				os.system(f'scp {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}')
-				logger.info(f"{path} {my_secrets.local_zipped_path} retrieved from bluehost server")
+				copy_command = os.system(f'scp {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}')
+				
+				if copy_command == 0:
+					logger.info(f"{path} {my_secrets.local_zipped_path} retrieved from bluehost server")
+					unzipped_paths.add(local_unzipped_filename)
 
-			except OSError:
-				logger.critical(f"Remote scp issue: {local_unzipped_filename}")
-				logger.critical(f"see: scp_errors_{todays_date} for more information")
-				mailer.send_mail(f"BH-WEBLOGS ERROR - scp copy. Check log: scp_errors_{todays_date}", f'../log_{todays_date}.log')
+				else:
+					logger.critical(f"Remote scp issue: {local_unzipped_filename}")
 
-			except FileNotFoundError as file_e:
-				logger.critical(f"File not found - {file_e}")
+			except (OSError, FileNotFoundError) as err:
+				logger.critical(f"see: {err} for more information")
+				# mailer.send_mail(f"BH-WEBLOGS ERROR - scp copy. Check log: scp_errors_{todays_date}", f'../log_{todays_date}.log')
 
 		else:
 			try:
