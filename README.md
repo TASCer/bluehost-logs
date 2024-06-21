@@ -1,7 +1,7 @@
 ![TASCS LOGO](./assets/logo.png)
 
 # Bluehost Apache Weblog Parser version: 1.0.1
-### Using Python 3.10 with MySQL 5.7.20-log
+### Using Python 3.10.2 with MySQL 5.7.20-log
 ###### Source IP to Country Name provided by IPWhois utility get_countries
 ###### Depdendancies noted in requirements.txt
 
