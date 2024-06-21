@@ -23,9 +23,10 @@ email_user = my_secrets.postfix_user
 email_password = my_secrets.postfix_password
 
 
-def send_mail(subject: str, text: str, attachment_path: object = None):
-    """ Takes a subject (str) and optional file attachment
-        Sends email to receiver_email contacts
+def send_mail(subject: str, text: str, attachment_path: object = None) -> None:
+    """
+    Takes a subject, text body, and optional file attachment
+    Sends email to receiver_email contacts
     """
     logger: Logger = logging.getLogger(__name__)
 
