@@ -106,6 +106,9 @@ def process(log_paths: set, month_name: str | None, year: str | None) -> Tuple[l
                 if AGENT.startswith('-'):
                     AGENT: str = "NA"
 
+                elif AGENT.startswith("'"):
+                    AGENT = AGENT.replace("'", "")
+
                 REF_IP: str = agent_list[-1].strip()
                 REF_URL: str = agent_list[-2]
 
