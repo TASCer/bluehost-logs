@@ -35,7 +35,9 @@
 
 [TASC Solutions LLC](https://www.tascs.net)
 
-* [x] TASC 1 - CREATE README
-* [ ] TASC 2 - Update README w/ code blocks
+#### PRE_LAUNCH TODO's
+
+* [ ] TASC 1 - CREATE 'input' dir and 'zipped_logfiles' subdir in root dir
+* [ ] TASC 2 - CREATE 'output' dir and 'unzipped_logfiles' subdir in root dir
 
 

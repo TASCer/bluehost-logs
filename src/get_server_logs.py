@@ -42,7 +42,7 @@ def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> s
 
 		# COPY FROM REMOTE BLUEHOST SERVER DEPENDING ON PLATFORM
 		if not platform.system() == 'Windows':
-			# TESTED WORKING ON RPI4
+
 			try:
 				copy_command = os.system(f'scp {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}')
 				
@@ -55,7 +55,6 @@ def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> s
 
 			except (OSError, FileNotFoundError) as err:
 				logger.critical(f"see: {err} for more information")
-				# mailer.send_mail(f"BH-WEBLOGS ERROR - scp copy. Check log: scp_errors_{todays_date}", f'../log_{todays_date}.log')
 
 		else:
 			try:
