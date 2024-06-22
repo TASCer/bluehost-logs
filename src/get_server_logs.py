@@ -1,6 +1,5 @@
 import datetime as dt
 import logging
-import mailer
 import my_secrets
 import os
 import platform
