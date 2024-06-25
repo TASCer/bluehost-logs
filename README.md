@@ -23,6 +23,7 @@
 #### src folder contains: 
 
 * Python files needed to retrieve, process, and store web server logs to a database for analysis
+  * src/tests directory if you wish to install pytest and run tests
 
 #### assets folder contains:
 
@@ -36,7 +37,8 @@
             
 ---
 
-[TASC Solutions LLC](https://www.tascs.net)
+#### Created as a replacement of cPanel's View Latest Activity and Google Analytics
+---
 
 #### PRE_LAUNCH TODO's
 
