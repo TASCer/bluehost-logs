@@ -28,8 +28,11 @@
 
 * 'sample_unzipped_logfile'  with anonymized data
 * 'logo.png' for README logo
-* A sample_my_secrets.py secrets template
-* File(s) for scheduled running
+* A template of mt 'my_secrets.py' secrets file
+
+#### misc folder contains:
+
+* Batch file for running a Scheduled Task in Windows 
             
 ---
 
