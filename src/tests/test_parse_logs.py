@@ -22,16 +22,11 @@ class LogEntry(NamedTuple):
     REF_IP: str
 
 
-with open("../../assets/sample_unzipped_logfile") as logs:
+with open(r"D:\PycharmProjects\bluehost-logs\assets\sample_unzipped_logfile") as logs:
     for log in logs:
         basic: str = log.split('" "')[0]
         ip: str = basic.split("- - ")[0]
         SOURCE: str = ip.rstrip()
-
-        # skip parsing system cron jobs performed on bluehost server
-        # if SOURCE == f"{my_secrets.bh_ip}":
-        #     continue
-
         basic_info: str = basic.split("- - ")[1]
         server_timestamp: str = basic_info.split("]")[0][1:]
 
@@ -48,13 +43,12 @@ with open("../../assets/sample_unzipped_logfile") as logs:
             FILE = FILE.replace("'", "")
 
         if len(FILE) >= 120:
-            # site_long_files.append(SOURCE)
-            # all_long_files.append((server_timestamp, SOURCE))
 
             try:
                 action_list: str = FILE.split("?")
                 action_file1: str = action_list[0]
                 action_file2: str = action_list[1][:80]
+
             except IndexError:
                 try:
                     action_list: str = FILE.split("+")
@@ -106,8 +100,6 @@ with open("../../assets/sample_unzipped_logfile") as logs:
         if "'" in CLIENT:
             CLIENT = CLIENT.replace("'", "")
 
-        # site_sources.append(SOURCE)
-        # all_sources.append(SOURCE)
         entry = LogEntry(
             server_timestamp=server_timestamp,
             SOURCE=SOURCE,
@@ -121,4 +113,4 @@ with open("../../assets/sample_unzipped_logfile") as logs:
             AGENT=AGENT,
             CLIENT=CLIENT,
         )
-print(entry)
+        print(entry.SOURCE)
