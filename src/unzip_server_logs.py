@@ -12,41 +12,45 @@ now: datetime = dt.datetime.now()
 
 
 def process(files: set[str], month_name: str | None, year: str | None) -> set[str]:
-	"""
-	Takes in a set of str paths for locally copied zipped bluehost website log files
-	Unzips file and saves to file
-	If historical args
-	param: paths
-	arg: month
-	arg: year
-	returns: set
-	"""
-	logger.info("<<<<< STARTED: UNZIPPING AND SAVING WEBLOGS <<<<<")
+    """
+    Takes in a set of str paths for locally copied zipped bluehost website log files
+    Unzips file and saves to file
+    If historical args
+    param: paths
+    arg: month
+    arg: year
+    returns: set
+    """
+    logger.info("<<<<< STARTED: UNZIPPING AND SAVING WEBLOGS <<<<<")
 
-	if year and month_name:
-		month_name = month_name
-		year = year
+    if year and month_name:
+        month_name = month_name
+        year = year
 
-	else:
-		month_name = now.strftime('%b')
-		year = str(now.year)
+    else:
+        month_name = now.strftime("%b")
+        year = str(now.year)
 
-	local_files = set()
+    local_files = set()
 
-	for file in files:
+    for file in files:
+        try:
+            local_file = file.split(".")[0]
+            with gzip.open(
+                f"{my_secrets.local_zipped_path}{file}", "rb"
+            ) as zipped_file:
+                with open(
+                    f"{my_secrets.local_unzipped_path}{local_file}_{month_name}-{year}",
+                    "wb",
+                ) as unzipped_file:
+                    unzipped_file.write(zipped_file.read())
 
-		try:
-			local_file = file.split('.')[0]
-			with gzip.open(f'{my_secrets.local_zipped_path}{file}', 'rb') as zipped_file:
-				with open(f"{my_secrets.local_unzipped_path}{local_file}_{month_name}-{year}", 'wb') as unzipped_file:
-					unzipped_file.write(zipped_file.read())
+        except (BaseException, FileNotFoundError) as e:
+            logger.critical(f"{e}")
+            local_file = None
 
-		except (BaseException, FileNotFoundError) as e:
-			logger.critical(f"{e}")
-			local_file = None
+        local_files.add(local_file)
 
-		local_files.add(local_file)
+    logger.info(">>>>> COMPLETED: UNZIPPING AND SAVING WEBLOGS >>>>>")
 
-	logger.info(">>>>> COMPLETED: UNZIPPING AND SAVING WEBLOGS >>>>>")
-
-	return local_files
+    return local_files

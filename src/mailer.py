@@ -13,7 +13,7 @@ from logging import Logger
 from ssl import Purpose
 
 now: datetime = dt.datetime.now()
-todays_date: str = now.strftime('%D').replace('/', '-')
+todays_date: str = now.strftime("%D").replace("/", "-")
 
 email_reciever: list[str] = my_secrets.email_to
 
@@ -54,9 +54,7 @@ def send_mail(subject: str, text: str, attachment_path: object = None) -> None:
             part_attachments.set_payload(attachment.read())
             encoders.encode_base64(part_attachments)
             part_attachments.add_header(
-                "Content-Disposition",
-                "attachment",
-                filename=attachment_path
+                "Content-Disposition", "attachment", filename=attachment_path
             )
             msg.attach(part_attachments)
             msg.attach(html)
@@ -86,7 +84,9 @@ def send_mail(subject: str, text: str, attachment_path: object = None) -> None:
     # PORT 587 w/auth sasl_method = PLAIN phpmailer has it LOG IN
 
     try:
-        with smtplib.SMTP(mail_server, 587, local_hostname= 'tascslt.tascs.local') as server:
+        with smtplib.SMTP(
+            mail_server, 587, local_hostname="tascslt.tascs.local"
+        ) as server:
             server.ehlo()
             server.starttls()
             try:
@@ -97,16 +97,17 @@ def send_mail(subject: str, text: str, attachment_path: object = None) -> None:
             server.sendmail(email_sender, email_reciever, msg.as_string())
             logger.info("email sent")
 
-    except (smtplib.SMTPException) as err:
+    except smtplib.SMTPException as err:
         logger.exception(f"{str(err)}")
 
+
 # SSL MODULE TESTING [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:997)  1123 on RPI4
-    # print(ssl.OPENSSL_VERSION)
-    # context = ssl.create_default_context(purpose=Purpose.SERVER_AUTH)
-    # context.get_ciphers()
-    # context.get_ca_certs()
-    # # context.options |= ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3  # Disable SSLv2 and SSLv3
-    #
+# print(ssl.OPENSSL_VERSION)
+# context = ssl.create_default_context(purpose=Purpose.SERVER_AUTH)
+# context.get_ciphers()
+# context.get_ca_certs()
+# # context.options |= ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3  # Disable SSLv2 and SSLv3
+#
 #     try:
 #         with smtplib.SMTP_SSL(mail_server, 587, local_hostname='tascslt.tascs.local', context=context) as server:
 #             server.ehlo()
@@ -120,24 +121,24 @@ def send_mail(subject: str, text: str, attachment_path: object = None) -> None:
 #
 # send_mail(f"Bluehost log processing complete. Public: 2 - SOHO: 2)", "test")
 
- # cert = ssl.get_server_certificate(addr=('tascs.test', 587))#, ssl_version=3, ca_certs=None)
-    # print(ciphers)
-    # print(len(ciphers))
-    # # certs = context.load_default_certs()
-    # print(len(certs))
-    # for c in certs:
-    #     issuer = c.get('issuer')
-    #     for i in issuer:
-    #         print(i[0])
-        # print(issuer[2])
-    # context.set_ciphers('ALL')        #("TLS_RSA_WITH_AES_128_CBC_SHA256")     # ("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256")
-    # context.hostname_checks_common_name = False
-    # context.check_hostname = False
-    # context.verify_mode = ssl.CERT_NONE
-    # ser_cert = ssl.get_server_certificate((my_secrets.postfix_mailhost, 587))
-    # context.load_default_certs()
-    # ca = context.get_ca_certs()
-    # c = context.get_ciphers()journ
-    # ciphers = list({x['name'] for x in c})
-    # print(ciphers)
-    # print(ca)
+# cert = ssl.get_server_certificate(addr=('tascs.test', 587))#, ssl_version=3, ca_certs=None)
+# print(ciphers)
+# print(len(ciphers))
+# # certs = context.load_default_certs()
+# print(len(certs))
+# for c in certs:
+#     issuer = c.get('issuer')
+#     for i in issuer:
+#         print(i[0])
+# print(issuer[2])
+# context.set_ciphers('ALL')        #("TLS_RSA_WITH_AES_128_CBC_SHA256")     # ("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256")
+# context.hostname_checks_common_name = False
+# context.check_hostname = False
+# context.verify_mode = ssl.CERT_NONE
+# ser_cert = ssl.get_server_certificate((my_secrets.postfix_mailhost, 587))
+# context.load_default_certs()
+# ca = context.get_ca_certs()
+# c = context.get_ciphers()journ
+# ciphers = list({x['name'] for x in c})
+# print(ciphers)
+# print(ca)
