@@ -1,28 +1,9 @@
-# import my_secrets
 import re
-from typing import NamedTuple
 
-# from src.parse_logs import LogEntry
-# def capital_case(x):
-#     return x.capitalize()
-#
-# def test_capital_case():
-#     assert capital_case('semaphore') == 'Semaphore'
-class LogEntry(NamedTuple):
-    server_timestamp: str
-    SOURCE: str
-    CLIENT: str
-    AGENT: str
-    ACTION: str
-    FILE: str
-    TYPE: str
-    RES_CODE: str
-    SIZE: int
-    REF_URL: str
-    REF_IP: str
+from parse_logs import LogEntry
 
 
-with open(r"D:\PycharmProjects\bluehost-logs\assets\sample_unzipped_logfile") as logs:
+with open(r"../assets/sample_unzipped_logfile") as logs:
     for log in logs:
         basic: str = log.split('" "')[0]
         ip: str = basic.split("- - ")[0]
@@ -36,7 +17,6 @@ with open(r"D:\PycharmProjects\bluehost-logs\assets\sample_unzipped_logfile") as
             ACTION, FILE, TYPE = action1.split(" ")
 
         except (ValueError, IndexError) as e:
-            # logger.error(f"\tACTION1 INFO SPLIT ERROR: {action1}--{e}")
             continue
 
         if "'" in FILE:
@@ -65,7 +45,6 @@ with open(r"D:\PycharmProjects\bluehost-logs\assets\sample_unzipped_logfile") as
             RES_CODE, SIZE = action2.split(" ")
 
         except ValueError as e:
-            # logger.error(f"Possible bot, check logs -> {e}")
             continue
 
         agent_info = log.split('" "')[1]
@@ -88,14 +67,12 @@ with open(r"D:\PycharmProjects\bluehost-logs\assets\sample_unzipped_logfile") as
             CLIENT, client_format = 2 * ("NA",)
 
         elif len(client) == 1:
-            # client_format = 'NA'
             client_os = client[0]
             CLIENT = client_os.replace(";", "")
 
         else:
             client_os = client[0]
             CLIENT = client_os.replace(";", "")
-            # client_format = client[1]
 
         if "'" in CLIENT:
             CLIENT = CLIENT.replace("'", "")
