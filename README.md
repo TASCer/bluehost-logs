@@ -23,7 +23,7 @@
 #### src folder contains: 
 
 * Python files needed to retrieve, process, and store web server logs to a database for analysis
-  * src/tests directory if you wish to install pytest and run tests
+  * test_parse_file.py file if you wish to install pytest and run tests
 
 #### assets folder contains:
 
