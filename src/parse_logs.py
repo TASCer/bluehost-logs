@@ -121,14 +121,12 @@ def process(
                     CLIENT, client_format = 2 * ("NA",)
 
                 elif len(client) == 1:
-                    # client_format = 'NA'
                     client_os = client[0]
                     CLIENT = client_os.replace(";", "")
 
                 else:
                     client_os = client[0]
                     CLIENT = client_os.replace(";", "")
-                    # client_format = client[1]
 
                 if "'" in CLIENT:
                     CLIENT = CLIENT.replace("'", "")
