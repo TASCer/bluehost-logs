@@ -46,7 +46,7 @@ def get():
         try:
             sql_no_country: CursorResult = conn.execute(
                 text(
-                    f"""SELECT * from {SOURCES} WHERE COUNTRY = '' or COUNTRY is null;"""
+                    f"""SELECT * from {SOURCES} WHERE COUNTRY = '' or COUNTRY is null or country like '%HTTP%';"""
                 )
             )
             no_country: list = [i for i in sql_no_country]
@@ -137,3 +137,5 @@ def get():
     logger.info(
         f"SOURCES table: {len(no_country) - errors} updated with country names and ASN description. {errors} errors encountered"
     )
+
+get()
