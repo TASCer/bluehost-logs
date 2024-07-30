@@ -23,7 +23,6 @@ with open(r"../assets/sample_unzipped_logfile") as logs:
             FILE = FILE.replace("'", "")
 
         if len(FILE) >= 120:
-
             try:
                 action_list: str = FILE.split("?")
                 action_file1: str = action_list[0]

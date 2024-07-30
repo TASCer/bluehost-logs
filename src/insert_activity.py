@@ -2,7 +2,7 @@ import datetime as dt
 import logging
 import my_secrets
 
-from dateutil.parser import *
+from dateutil.parser import parse
 from datetime import datetime
 from ipwhois.utils import get_countries
 from logging import Logger

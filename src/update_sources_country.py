@@ -138,4 +138,5 @@ def get():
         f"SOURCES table: {len(no_country) - errors} updated with country names and ASN description. {errors} errors encountered"
     )
 
-get()
+
+# get()

@@ -2,7 +2,8 @@
 import datetime as dt
 import logging
 import my_secrets
-import smtplib, ssl
+import smtplib
+import ssl
 
 from datetime import datetime
 from email import encoders
