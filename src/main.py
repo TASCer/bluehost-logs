@@ -19,12 +19,10 @@ todays_date: str = now.strftime("%D").replace("/", "-")
 root_logger: Logger = logging.getLogger()
 root_logger.setLevel(logging.INFO)
 
-fh = logging.FileHandler(f"../log_{todays_date}.log")
+fh = logging.FileHandler(f"../{todays_date}.log")
 fh.setLevel(logging.DEBUG)
 
-formatter: Formatter = logging.Formatter(
-    "%(asctime)s - %(name)s -%(lineno)d - %(levelname)s - %(message)s"
-)
+formatter: Formatter = logging.Formatter("%(asctime)s - %(name)s -%(lineno)d - %(levelname)s - %(message)s")
 fh.setFormatter(formatter)
 
 root_logger.addHandler(fh)
@@ -84,9 +82,8 @@ if __name__ == "__main__":
     if have_database and have_tables:
         logger.info("RDBMS is available and ready")
     else:
-        logger.error(
-            f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}"
-        )
+        logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
+
     logger.info("***** STARTING WEBLOG PROCESSING *****")
 
     parser = argparse.ArgumentParser(description="One-Off month/year orocessing")

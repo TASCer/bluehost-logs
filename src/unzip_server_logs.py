@@ -24,21 +24,19 @@ def process(files: set[str], month_name: str | None, year: str | None) -> set[st
     logger.info("<<<<< STARTED: UNZIPPING AND SAVING WEBLOGS <<<<<")
 
     if year and month_name:
-        month_name = month_name
-        year = year
+        month_name: str = month_name
+        year: str = year
 
     else:
-        month_name = now.strftime("%b")
-        year = str(now.year)
+        month_name: str = now.strftime("%b")
+        year: str = str(now.year)
 
-    local_files = set()
+    local_files: set = set()
 
     for file in files:
         try:
-            local_file = file.split(".")[0]
-            with gzip.open(
-                f"{my_secrets.local_zipped_path}{file}", "rb"
-            ) as zipped_file:
+            local_file: str | None = file.split(".")[0]
+            with gzip.open(f"{my_secrets.local_zipped_path}{file}", "rb") as zipped_file:
                 with open(
                     f"{my_secrets.local_unzipped_path}{local_file}_{month_name}-{year}",
                     "wb",
@@ -47,7 +45,7 @@ def process(files: set[str], month_name: str | None, year: str | None) -> set[st
 
         except (BaseException, FileNotFoundError) as e:
             logger.critical(f"{e}")
-            local_file = None
+            local_file: None = None
 
         local_files.add(local_file)
 

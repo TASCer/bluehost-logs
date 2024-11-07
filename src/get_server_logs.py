@@ -22,22 +22,22 @@ def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> s
     param: year
     """
 
-    unzipped_paths = set()
+    unzipped_paths: set = set()
 
     if year and month_name:
-        month_name = month_name
-        year = year
+        month_name: str = month_name
+        year: str = year
 
     else:
-        month_name = now.strftime("%b")
-        year = str(now.year)
+        month_name: str = now.strftime("%b")
+        year: str = str(now.year)
 
     logger.info("STARTED: Copying site log files from remote web server")
 
     for path in paths:
-        remote_zipped_filename = path + month_name + "-" + year + ".gz"
+        remote_zipped_filename: str = path + month_name + "-" + year + ".gz"
 
-        local_unzipped_filename = remote_zipped_filename.split("/")[1]
+        local_unzipped_filename: str = remote_zipped_filename.split("/")[1]
 
         # COPY FROM REMOTE BLUEHOST SERVER DEPENDING ON PLATFORM
         if not platform.system() == "Windows":
@@ -62,7 +62,7 @@ def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> s
             try:
                 copy_command = f"pscp -batch {my_secrets.user}@{my_secrets.bh_ip}:{remote_zipped_filename} {my_secrets.local_zipped_path}"
                 result = subprocess.check_output(copy_command)
-                str_result = result.decode(encoding="utf-8")
+                str_result: str = result.decode(encoding="utf-8")
                 logger.info(str_result.strip())
                 unzipped_paths.add(local_unzipped_filename)
 
@@ -71,6 +71,7 @@ def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> s
 
             except FileNotFoundError as file_e:
                 logger.critical(f"File not found - {file_e}")
+
                 continue
 
     logger.info("COMPLETED: Copying site log files from remote web server")

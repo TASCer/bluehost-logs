@@ -1,18 +1,13 @@
-import datetime as dt
 import ipwhois
 import logging
 import my_secrets
 
-from datetime import datetime
 from ipwhois.utils import get_countries
 from ipwhois import IPWhois
 from logging import Logger
 from sqlalchemy.engine import Engine, CursorResult
 from sqlalchemy import exc, create_engine, text
 from typing import Optional
-
-now: datetime = dt.datetime.now()
-todays_date: str = now.strftime("%D").replace("/", "-")
 
 # SQL TABLES
 LOGS = "logs"
@@ -22,7 +17,9 @@ COUNTRIES = get_countries()
 
 
 def get():
-    """Updates lookup table SOURCE entries with full country name and ASN Description"""
+    """
+    Updates lookup table 'sources' entries with full country name and ASN Description from whois
+    """
     logger: Logger = logging.getLogger(__name__)
 
     http_errors = 0
@@ -37,19 +34,16 @@ def get():
         exit()
 
     with engine.connect() as conn, conn.begin():
-        logger.info(
-            "Updating lookup table with source country name and description via IPWhois"
-        )
+        logger.info("Updating lookup table with source country name and description via IPWhois")
 
         errors = 0
 
         try:
             sql_no_country: CursorResult = conn.execute(
-                text(
-                    f"""SELECT * from {SOURCES} WHERE COUNTRY = '' or COUNTRY is null or country like '%HTTP%';"""
-                )
-            )
+                text(f"""SELECT * from {SOURCES} WHERE COUNTRY = '' or COUNTRY is null or country like '%HTTP%';"""))
+
             no_country: list = [i for i in sql_no_country]
+
         except exc.SQLAlchemyError as e:
             logger.warning(str(e))
 
@@ -64,12 +58,9 @@ def get():
 
             except ipwhois.HTTPLookupError as http:
                 http_errors += 1
-                http = str(http).split("&")[0]
-                conn.execute(
-                    text(
-                        f"""update {SOURCES} SET country = '{str(http)}' WHERE SOURCE = '{ip}';"""
-                    )
-                )
+                http: str = str(http).split("&")[0]
+                conn.execute(text(f"""update {SOURCES} SET country = '{str(http)}' WHERE SOURCE = '{ip}';"""))
+
                 continue
 
             except (
@@ -88,11 +79,8 @@ def get():
                 print(f"Non httplookup error: {error} {ip}")
                 logger.warning(f"Non httplookup error: {error} {ip}")
 
-                conn.execute(
-                    text(
-                        f"""update {SOURCES} SET country = '{error}' WHERE SOURCE = '{ip}';"""
-                    )
-                )
+                conn.execute(text(f"""update {SOURCES} SET country = '{error}' WHERE SOURCE = '{ip}';"""))
+
                 continue
 
             asn_description: str = result["asn_description"]
@@ -114,9 +102,7 @@ def get():
 
             elif result["asn_country_code"].islower():
                 asn_alpha2: str = asn_alpha2.upper()
-                logger.warning(
-                    f"RDAP responded with lowercase country for {ip}, should be upper"
-                )
+                logger.warning(f"RDAP responded with lowercase country for {ip}, should be upper")
 
             else:
                 asn_alpha2 = result["asn_country_code"]
@@ -134,9 +120,10 @@ def get():
             except exc.ProgrammingError as e:
                 logger.error(e)
 
-    logger.info(
-        f"SOURCES table: {len(no_country) - errors} updated with country names and ASN description. {errors} errors encountered"
-    )
+    logger.info(f"sources table: {len(no_country) - errors} updated with country names and ASN description.")
+
+    if errors >= 1:
+        logger.warning(f"sources table: {errors} errors encountered")
 
 
 # get()

@@ -35,12 +35,12 @@ def process(
     all_long_files: list = []
 
     if year and month_name:
-        month_name = month_name
-        year = year
+        month_name: str = month_name
+        year: str = year
 
     else:
-        month_name = now.strftime("%b")
-        year = str(now.year)
+        month_name: str = now.strftime("%b")
+        year: str = str(now.year)
 
     for p in log_paths:
         logger.info(f"Parsing {p} logs")
@@ -86,7 +86,7 @@ def process(
                         try:
                             action_list: str = FILE.split("+")
                             action_file1: str = action_list[0]
-                            action_file2 = ""
+                            action_file2: str = ""
 
                         except IndexError as e:
                             logger.error(e)
@@ -94,46 +94,46 @@ def process(
                     FILE = action_file1 + action_file2 + " *TRUNCATED*"
 
                 try:
-                    action2 = basic_info.split('"')[2].strip()
+                    action2: str = basic_info.split('"')[2].strip()
                     RES_CODE, SIZE = action2.split(" ")
 
                 except ValueError as e:
                     logger.error(f"Possible bot, check logs -> {e}")
                     continue
 
-                agent_info = log.split('" "')[1]
-                agent_list = agent_info.split(" ")
-                AGENT = agent_list[0].replace('"', "")
+                agent_info: str = log.split('" "')[1]
+                agent_list: list = agent_info.split(" ")
+                AGENT: str = agent_list[0].replace('"', "")
 
                 if AGENT.startswith("-"):
                     AGENT: str = "NA"
 
                 elif AGENT.startswith("'"):
-                    AGENT = AGENT.replace("'", "")
+                    AGENT: str = AGENT.replace("'", "")
 
                 REF_IP: str = agent_list[-1].strip()
                 REF_URL: str = agent_list[-2]
 
                 # finds all between (    )
-                client: list = re.findall(r"\((.*?)\)", log)
+                client: list[str] = re.findall(r"\((.*?)\)", log)
 
                 if not client:
                     CLIENT, client_format = 2 * ("NA",)
 
                 elif len(client) == 1:
-                    client_os = client[0]
-                    CLIENT = client_os.replace(";", "")
+                    client_os: str = client[0]
+                    CLIENT: str = client_os.replace(";", "")
 
                 else:
-                    client_os = client[0]
-                    CLIENT = client_os.replace(";", "")
+                    client_os: str = client[0]
+                    CLIENT: str = client_os.replace(";", "")
 
                 if "'" in CLIENT:
-                    CLIENT = CLIENT.replace("'", "")
+                    CLIENT: str = CLIENT.replace("'", "")
 
                 site_sources.append(SOURCE)
                 all_sources.append(SOURCE)
-                entry = LogEntry(
+                entry: LogEntry = LogEntry(
                     server_timestamp=server_timestamp,
                     SOURCE=SOURCE,
                     ACTION=ACTION,
@@ -155,23 +155,15 @@ def process(
                     site_log_entries.append(entry)
                     all_log_entries.append(entry)
 
-            logger.info(
-                f"\t\t{len(site_log_entries)} NON SOHO logs with {len(set(site_sources))} unique source ip"
-            )
+            logger.info(f"\t\t{len(site_log_entries)} NON SOHO logs with {len(set(site_sources))} unique source ip")
             logger.info(f"\t\t{len(site_my_log_entries)} SOHO logs")
-            logger.info(
-                f"\t\t{len(site_log_entries) + len(site_my_log_entries)} SITE LOG ENTRIES"
-            )
+            logger.info(f"\t\t{len(site_log_entries) + len(site_my_log_entries)} SITE LOG ENTRIES")
 
             if len(site_long_files) >= 1:
-                logger.warning(
-                    f"\t\t{len(site_long_files)} long file names encountered."
-                )
+                logger.warning(f"\t\t{len(site_long_files)} long file names encountered.")
 
     if len(all_long_files) > 0:
-        logger.warning(
-            f"\t\t{len(all_long_files)} LOG ENTRIES HAD FILE NAME OVER 120 chars."
-        )
+        logger.warning(f"\t\t{len(all_long_files)} LOG ENTRIES HAD FILE NAME OVER 120 chars.")
 
     logger.info("COMPLETED WEBLOG PARSING")
 
