@@ -91,14 +91,14 @@ if __name__ == "__main__":
         "-m",
         "--month_num",
         type=int,
-        choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        choices=[m for m in range(1,13)],
         help="Enter a Month number: 1-12",
     )
     parser.add_argument(
         "-y",
         "--year",
         type=int,
-        choices=[2019, 2020, 2021, 2022, 2023, 2024],
+        choices=[y for y in range(2019, now.year +1)],
         help="Enter full year i.e: 2022",
     )
 
