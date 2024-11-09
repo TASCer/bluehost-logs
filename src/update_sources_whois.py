@@ -13,7 +13,8 @@ from typing import Optional
 LOGS = "logs"
 SOURCES = "sources"
 
-def whois_lookup():
+
+def lookup():
     """
     Updates lookup table 'sources' entries with full country name and ASN Description from whois
     """

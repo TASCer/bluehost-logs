@@ -8,8 +8,8 @@ import logging
 import mailer
 import my_secrets
 import parse_logs
-import unzip_server_logs
-import update_sources_country
+import unzip_fetched_server_logs
+import update_sources_whois
 
 from logging import Logger, Formatter
 
@@ -53,7 +53,7 @@ def main(month_num: int | None, year: int | None) -> None:
     local_zipped_logfiles: set[str] = fetch_server_logs.secure_copy(
         remote_log_file_paths, month_name, year
     )
-    local_unzipped_logfiles: set[str] = unzip_server_logs.process(
+    local_unzipped_logfiles: set[str] = unzip_fetched_server_logs.process(
         local_zipped_logfiles, month_name, year
     )
 
@@ -63,7 +63,7 @@ def main(month_num: int | None, year: int | None) -> None:
 
     unique_sources: set = set(ips)
     insert_unique_sources.update(unique_sources)
-    update_sources_country.whois_lookup()
+    update_sources_whois.lookup()
     insert_activity.update(processed_logs, my_processed_logs)
 
     logger.info("***** COMPLETED WEB LOG PROCESSING *****")
@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
     logger.info("***** STARTING WEBLOG PROCESSING *****")
 
-    parser = argparse.ArgumentParser(description="One-Off month/year orocessing")
+    parser = argparse.ArgumentParser(description="ADHOC month/year log processing")
     parser.add_argument(
         "-m",
         "--month_num",
