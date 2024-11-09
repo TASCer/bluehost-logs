@@ -13,7 +13,7 @@ now: dt = dt.date.today()
 todays_date: str = now.strftime("%D").replace("/", "-")
 
 
-def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> set:
+def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> set[str]:
     """
     Takes in a list of paths for location of website log files
     If historical
