@@ -29,6 +29,14 @@ class LogEntry(NamedTuple):
 def process(
     log_paths: set, month_name: str | None, year: str | None
 ) -> Tuple[list[str], list[LogEntry], list[LogEntry]]:
+    """
+    Function takes a set of unzipped log paths and month and year
+    Parses log file and returns tuple
+    :param log_paths:
+    :param month_name:
+    :param year:
+    :return:
+    """
     all_log_entries: list = []
     all_my_log_entries: list = []
     all_sources: list = []
@@ -53,6 +61,7 @@ def process(
             for log in logs:
                 basic: str = log.split('" "')[0]
                 ip: str = basic.split("- - ")[0]
+
                 SOURCE: str = ip.rstrip()
 
                 # skip parsing system cron jobs performed on bluehost server
@@ -168,3 +177,7 @@ def process(
     logger.info("COMPLETED WEBLOG PARSING")
 
     return all_sources, all_log_entries, all_my_log_entries
+
+
+if __name__ == '__main__':
+    pass
