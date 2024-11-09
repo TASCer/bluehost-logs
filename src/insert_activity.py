@@ -4,7 +4,7 @@ import my_secrets
 
 from dateutil.parser import parse
 from datetime import datetime
-from ipwhois.utils import get_countries
+
 from logging import Logger
 from sqlalchemy.engine import Engine
 from sqlalchemy import exc, create_engine, text
@@ -15,7 +15,6 @@ todays_date: str = now.strftime("%D").replace("/", "-")
 # SQL TABLE constants
 LOGS = "logs"
 MY_LOGS = "my_logs"
-COUNTRIES = get_countries()
 
 
 def parse_timestamp(ts: str) -> datetime:
@@ -37,7 +36,6 @@ def update(log_entries: list, my_log_entries: list) -> None:
 
     except exc.SQLAlchemyError as e:
         logger.critical(str(e))
-        # engine = None
         exit()
 
     with engine.connect() as conn, conn.begin():
