@@ -1,7 +1,7 @@
 import argparse
 import datetime as dt
 import db_checks
-import get_server_logs
+import fetch_server_logs
 import insert_activity
 import insert_unique_sources
 import logging
@@ -50,7 +50,7 @@ def main(month_num: int | None, year: int | None) -> None:
         month_name: str = now.strftime("%b")
         year: str = str(now.year)
 
-    local_zipped_logfiles: set[str] = get_server_logs.secure_copy(
+    local_zipped_logfiles: set[str] = fetch_server_logs.secure_copy(
         remote_log_file_paths, month_name, year
     )
     local_unzipped_logfiles: set[str] = unzip_server_logs.process(
@@ -63,7 +63,7 @@ def main(month_num: int | None, year: int | None) -> None:
 
     unique_sources: set = set(ips)
     insert_unique_sources.update(unique_sources)
-    update_sources_country.get()
+    update_sources_country.whois_lookup()
     insert_activity.update(processed_logs, my_processed_logs)
 
     logger.info("***** COMPLETED WEB LOG PROCESSING *****")
@@ -91,14 +91,14 @@ if __name__ == "__main__":
         "-m",
         "--month_num",
         type=int,
-        choices=[m for m in range(1,13)],
+        choices=[m for m in range(1, 13)],
         help="Enter a Month number: 1-12",
     )
     parser.add_argument(
         "-y",
         "--year",
         type=int,
-        choices=[y for y in range(2019, now.year +1)],
+        choices=[y for y in range(2019, now.year + 1)],
         help="Enter full year i.e: 2022",
     )
 
