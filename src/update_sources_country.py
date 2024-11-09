@@ -1,8 +1,8 @@
+import country_converter as coco
 import ipwhois
 import logging
 import my_secrets
 
-from ipwhois.utils import get_countries
 from ipwhois import IPWhois
 from logging import Logger
 from sqlalchemy.engine import Engine, CursorResult
@@ -13,10 +13,7 @@ from typing import Optional
 LOGS = "logs"
 SOURCES = "sources"
 
-COUNTRIES = get_countries()
-
-
-def get():
+def whois_lookup():
     """
     Updates lookup table 'sources' entries with full country name and ASN Description from whois
     """
@@ -106,7 +103,7 @@ def get():
 
             else:
                 asn_alpha2 = result["asn_country_code"]
-                country_name: Optional[str] = COUNTRIES.get(asn_alpha2)
+                country_name: Optional[str] = coco.convert(asn_alpha2)
 
             try:
                 conn.execute(
@@ -126,4 +123,5 @@ def get():
         logger.warning(f"sources table: {errors} errors encountered")
 
 
-# get()
+if __name__ == '__main__':
+    whois_lookup()
