@@ -1,4 +1,3 @@
-import datetime as dt
 import logging
 import my_secrets
 import sqlalchemy as sa
@@ -16,9 +15,6 @@ from sqlalchemy import (
 )
 from sqlalchemy_utils import database_exists, create_database
 
-now = dt.datetime.now()
-todays_date = now.strftime("%D").replace("/", "-")
-
 # SQL DB connection constants
 DB_HOSTNAME = f"{my_secrets.dbhost}"
 DB_NAME = f"{my_secrets.dbname}"
@@ -32,7 +28,10 @@ MY_LOGS = "my_logs"
 
 
 def schema():
-    """Check to see if schema/DB_NAME is present, if not, create"""
+    """
+    Function checks to see if schema/DB_NAME is present/created and return True
+    If not return False.
+    """
     logger: Logger = logging.getLogger(__name__)
     try:
         engine = create_engine(
@@ -51,9 +50,8 @@ def schema():
 
 def tables():
     """
-    Check to see if all CONSTANT tables are created
-    If not, create them and return True
-    Returns False and logs error if issue
+    Function checks to see if all tables are present/created and return True
+    If not return True
     """
     logger: Logger = logging.getLogger(__name__)
 

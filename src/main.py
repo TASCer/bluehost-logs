@@ -29,17 +29,36 @@ root_logger.addHandler(fh)
 
 logger: Logger = logging.getLogger(__name__)
 
-# REMOTE BLUEHOST LOG PATHS EXCEPT month-year
-tascs_logs_path = my_secrets.tascs_logs_zipped
-hoa_logs_path = my_secrets.hoa_logs_zipped
-roadspies_logs_path = my_secrets.roadspies_logs_zipped
-tascs_logs_historical_path = my_secrets.tascs_logs_historical_zipped
+# REMOTE BLUEHOST LOG PATHS EXCEPT "month-year"
+remote_tascs_logpath = my_secrets.tascs_logs_zipped
+remote_hoa_logpath = my_secrets.hoa_logs_zipped
+remote_roadspies_logpath = my_secrets.roadspies_logs_zipped
+remote_tascs_historical_logpath = my_secrets.tascs_logs_historical_zipped
 
-remote_log_file_paths = [tascs_logs_path, hoa_logs_path, roadspies_logs_path]
-historical_remote_log_file_paths = [tascs_logs_historical_path]
+remote_logfile_paths = [remote_tascs_logpath, remote_hoa_logpath, remote_roadspies_logpath]
+historical_remote_log_file_paths = [remote_tascs_historical_logpath]
+
+
+def database_check():
+    """
+    Function checks if database schema and tables are available
+    :return:
+    """
+    logger.info("Checking RDBMS Availability")
+    have_database: bool = db_checks.schema()
+    have_tables: bool = db_checks.tables()
+
+    if have_database and have_tables:
+        logger.info("RDBMS ONLINE")
+        return True
+
+    else:
+        logger.error(f"**RDBMS OFFLINE: {have_database} / TABLES: {have_tables}**")
+        return False
 
 
 def main(month_num: int | None, year: int | None) -> None:
+    logger.info("***** STARTING WEBLOG PROCESSING *****")
     if year and month_num:
         dt_string: str = f"{year}-{month_num}-01"
         dt_obj: dt = dt.datetime.strptime(dt_string, "%Y-%m-%d")
@@ -51,7 +70,7 @@ def main(month_num: int | None, year: int | None) -> None:
         year: str = str(now.year)
 
     local_zipped_logfiles: set[str] = fetch_server_logs.secure_copy(
-        remote_log_file_paths, month_name, year
+        remote_logfile_paths, month_name, year
     )
     local_unzipped_logfiles: set[str] = unzip_fetched_server_logs.process(
         local_zipped_logfiles, month_name, year
@@ -75,33 +94,23 @@ def main(month_num: int | None, year: int | None) -> None:
 
 
 if __name__ == "__main__":
-    logger.info("Checking RDBMS Availability")
-    have_database: bool = db_checks.schema()
-    have_tables: bool = db_checks.tables()
+    rdbms: bool = database_check()
+    if rdbms:
+        parser = argparse.ArgumentParser(description="ADHOC month/year log processing")
+        parser.add_argument(
+            "-m",
+            "--month_num",
+            type=int,
+            choices=[m for m in range(1, 13)],
+            help="Enter a Month number: 1-12",
+        )
+        parser.add_argument(
+            "-y",
+            "--year",
+            type=int,
+            choices=[y for y in range(2019, now.year + 1)],
+            help="Enter full year i.e: 2022",
+        )
+        args = parser.parse_args()
 
-    if have_database and have_tables:
-        logger.info("RDBMS is available and ready")
-    else:
-        logger.error(f"RDBMS IS NOT OPERATIONAL: RDBMS: {have_database} / TABLES: {have_tables}")
-
-    logger.info("***** STARTING WEBLOG PROCESSING *****")
-
-    parser = argparse.ArgumentParser(description="ADHOC month/year log processing")
-    parser.add_argument(
-        "-m",
-        "--month_num",
-        type=int,
-        choices=[m for m in range(1, 13)],
-        help="Enter a Month number: 1-12",
-    )
-    parser.add_argument(
-        "-y",
-        "--year",
-        type=int,
-        choices=[y for y in range(2019, now.year + 1)],
-        help="Enter full year i.e: 2022",
-    )
-
-    args = parser.parse_args()
-
-    main(**vars(args))
+        main(**vars(args))

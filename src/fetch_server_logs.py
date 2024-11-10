@@ -32,7 +32,7 @@ def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> s
         month_name: str = now.strftime("%b")
         year: str = str(now.year)
 
-    logger.info("STARTED: Copying site log files from remote web server")
+    logger.info("STARTED: Remote download of site web logs")
 
     for path in paths:
         remote_zipped_filename: str = path + month_name + "-" + year + ".gz"
@@ -74,6 +74,6 @@ def secure_copy(paths: list[str], month_name: str | None, year: str | None) -> s
 
                 continue
 
-    logger.info("COMPLETED: Copying site log files from remote web server")
+    logger.info("COMPLETED: Remote download of site web logs")
 
     return unzipped_paths

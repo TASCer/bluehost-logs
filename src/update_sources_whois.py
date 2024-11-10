@@ -125,4 +125,4 @@ def lookup():
 
 
 if __name__ == '__main__':
-    whois_lookup()
+    lookup()

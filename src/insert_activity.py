@@ -1,4 +1,3 @@
-import datetime as dt
 import logging
 import my_secrets
 
@@ -9,15 +8,17 @@ from logging import Logger
 from sqlalchemy.engine import Engine
 from sqlalchemy import exc, create_engine, text
 
-now: datetime = dt.datetime.now()
-todays_date: str = now.strftime("%D").replace("/", "-")
-
 # SQL TABLE constants
 LOGS = "logs"
 MY_LOGS = "my_logs"
 
 
 def parse_timestamp(ts: str) -> datetime:
+    """
+    Function takes in a str from log file and returns a datetime
+    :param ts:
+    :return:
+    """
     ts = ts.replace(":", " ", 1)
     ts_split = ts.split(" ", 2)
     ts = " ".join(ts_split[0:2])
@@ -27,7 +28,12 @@ def parse_timestamp(ts: str) -> datetime:
 
 
 def update(log_entries: list, my_log_entries: list) -> None:
-    """Updates lookup table with unique ips from ALPHA-2 to full country name"""
+    """
+    Function takes in list of:
+    -public log entries
+    -SOHO/testing log entries
+    Inserts log entries into their respective tables
+    """
     logger: Logger = logging.getLogger(__name__)
     try:
         engine: Engine = create_engine(

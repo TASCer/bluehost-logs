@@ -1,22 +1,17 @@
-import datetime as dt
 import logging
 import my_secrets
 
-from datetime import datetime
 from logging import Logger
 from sqlalchemy.engine import Engine
 from sqlalchemy import exc, create_engine, text
-
-now: datetime = dt.datetime.now()
-todays_date: str = now.strftime("%D").replace("/", "-")
 
 # SQL TABLE constants
 SOURCES = "sources"
 
 
-def update(unique_ips: set) -> None:
+def update(unique_ips: set[str]) -> None:
     """
-    Updates lookup table with unique sources
+    Updates sources/lookup table with unique source ip addresses from latest processing
     :param: set
     """
     logger: Logger = logging.getLogger(__name__)
