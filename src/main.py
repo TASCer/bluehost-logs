@@ -33,10 +33,10 @@ logger: Logger = logging.getLogger(__name__)
 remote_tascs_logpath = my_secrets.tascs_logs_zipped
 remote_hoa_logpath = my_secrets.hoa_logs_zipped
 remote_roadspies_logpath = my_secrets.roadspies_logs_zipped
-remote_tascs_historical_logpath = my_secrets.tascs_logs_historical_zipped
-
 remote_logfile_paths = [remote_tascs_logpath, remote_hoa_logpath, remote_roadspies_logpath]
-historical_remote_log_file_paths = [remote_tascs_historical_logpath]
+
+remote_historical_logpath = my_secrets.tascs_logs_historical_zipped
+remote_historical_logpaths = [remote_historical_logpath]
 
 
 def database_check():
