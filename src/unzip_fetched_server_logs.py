@@ -21,7 +21,7 @@ def process(files: set[str], month_name: str | None, year: str | None) -> set[st
     arg: year
     returns: set
     """
-    logger.info("<<<<< STARTED: UNZIPPING AND SAVING WEBLOGS <<<<<")
+    logger.info("<<<<< STARTED: UNZIPPING AND SAVING DOWNLOADED WEBLOGS <<<<<")
 
     if year and month_name:
         month_name: str = month_name
@@ -49,6 +49,6 @@ def process(files: set[str], month_name: str | None, year: str | None) -> set[st
 
         local_files.add(local_file)
 
-    logger.info(">>>>> COMPLETED: UNZIPPING AND SAVING WEBLOGS >>>>>")
+    logger.info(">>>>> COMPLETED: UNZIPPING AND SAVING DOWNLOADED WEBLOGS >>>>>")
 
     return local_files
