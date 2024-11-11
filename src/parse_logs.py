@@ -62,6 +62,12 @@ def process(
                 basic: str = log.split('" "')[0]
                 ip: str = basic.split("- - ")[0]
 
+                if ":" in ip:
+                    logger.warning(f"IPv6: {ip} entry encountered ")
+                    logger.warning(f"{basic}")
+
+                    continue
+
                 SOURCE: str = ip.rstrip()
 
                 # skip parsing system cron jobs performed on bluehost server
@@ -91,6 +97,7 @@ def process(
                         action_list: str = FILE.split("?")
                         action_file1: str = action_list[0]
                         action_file2: str = action_list[1][:80]
+
                     except IndexError:
                         try:
                             action_list: str = FILE.split("+")
@@ -180,4 +187,4 @@ def process(
 
 
 if __name__ == '__main__':
-    pass
+    process()
