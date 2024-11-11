@@ -1,4 +1,5 @@
 import country_converter as coco
+import datetime as dt
 import ipwhois
 import logging
 import my_secrets
@@ -19,6 +20,7 @@ def lookup():
     Updates lookup table 'sources' entries with full country name and ASN Description from whois
     """
     logger: Logger = logging.getLogger(__name__)
+    start_time = dt.datetime.utcnow()
 
     http_errors = 0
 
@@ -46,10 +48,6 @@ def lookup():
             logger.warning(str(e))
 
         for ip, country, code, desc in no_country:
-            if ":" in ip:
-                logger.warning(f"IPv6 source encountered {ip}")
-                continue
-
             try:
                 obj: IPWhois = ipwhois.IPWhois(ip, timeout=10)
                 result: dict = obj.lookup_rdap()
@@ -118,11 +116,20 @@ def lookup():
             except exc.ProgrammingError as e:
                 logger.error(e)
 
-    logger.info(f"sources table: {len(no_country) - errors} updated with country names and ASN description.")
-
     if errors >= 1:
         logger.warning(f"sources table: {errors} errors encountered")
 
+    logger.info(f"sources table: {len(no_country) - errors} updated with country names and ASN description.")
+
+    stop_time = dt.datetime.utcnow()
+    elapsed_time = int((stop_time - start_time).total_seconds())
+
+    logger.info(f"\tupdated: {len(no_country)} lookups in {elapsed_time} seconds.")
+
+    if elapsed_time >= 60:
+        minutes: int = elapsed_time // 60
+        whois_rate: int = len(no_country) // minutes
+        logger.info(f"\t ~{whois_rate= } lookups per minute")
 
 if __name__ == '__main__':
     lookup()
