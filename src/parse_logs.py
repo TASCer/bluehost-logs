@@ -63,8 +63,8 @@ def process(
                 ip: str = basic.split("- - ")[0]
 
                 if ":" in ip:
-                    logger.warning(f"IPv6: {ip} entry encountered ")
-                    logger.warning(f"{basic}")
+                    logger.warning(f"IPv6 entry encountered: {ip}")
+                    logger.warning(f"IPv6 basic: {basic}")
 
                     continue
 
