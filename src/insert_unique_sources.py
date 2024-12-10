@@ -13,6 +13,7 @@ def update(unique_ips: set[str]) -> None:
     """
     Updates sources/lookup table with unique source ip addresses from latest processing
     :param: set
+    :return: None
     """
     logger: Logger = logging.getLogger(__name__)
 

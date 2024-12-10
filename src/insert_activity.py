@@ -17,7 +17,7 @@ def parse_timestamp(ts: str) -> datetime:
     """
     Function takes in a str from log file and returns a datetime
     :param ts:
-    :return:
+    :return: datetime
     """
     ts = ts.replace(":", " ", 1)
     ts_split = ts.split(" ", 2)

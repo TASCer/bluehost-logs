@@ -39,10 +39,10 @@ remote_historical_logpath = my_secrets.tascs_logs_historical_zipped
 remote_historical_logpaths = [remote_historical_logpath]
 
 
-def database_check():
+def database_check() -> None:
     """
     Function checks if database schema and tables are available
-    :return:
+    :return: None
     """
     logger.info("Checking RDBMS Availability")
     have_database: bool = db_checks.schema()
