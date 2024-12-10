@@ -59,13 +59,16 @@ def lookup():
 
                 continue
 
+            except ipwhois.ASNParseError as parse_err:
+                logger.error(parse_err)
+                print(parse_err)
+
             except (
                 UnboundLocalError,
                 ValueError,
                 AttributeError,
                 ipwhois.BaseIpwhoisException,
                 ipwhois.ASNLookupError,
-                ipwhois.ASNParseError,
                 ipwhois.ASNOriginLookupError,
                 ipwhois.ASNRegistryError,
                 ipwhois.HostLookupError,
@@ -130,6 +133,7 @@ def lookup():
         minutes: int = elapsed_time // 60
         whois_rate: int = len(no_country) // minutes
         logger.info(f"\t ~{whois_rate= } lookups per minute")
+
 
 if __name__ == '__main__':
     lookup()
