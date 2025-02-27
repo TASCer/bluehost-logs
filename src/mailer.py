@@ -103,7 +103,7 @@ def send_mail(subject: str, text: str, attachment_path: object = None) -> None:
 
 
 if __name__ == '__main__':
-    send_mail("test", "test", attachment_path="../01-02-25.log")
+    send_mail("test", "test", attachment_path="../_old_logs/01-02-25.log")
 
 
 

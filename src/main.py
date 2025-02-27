@@ -87,15 +87,23 @@ def main(month_num: int | None, year: int | None) -> None:
 
     logger.info("***** COMPLETED WEB LOG PROCESSING *****")
 
-    mailer.send_mail(
-        "BH WebLog Processing Complete",
-        f"Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}",
-    )
+    if len(my_processed_logs > 0 or len(processed_logs) > 0):
+        mailer.send_mail(
+            "BH WebLog Processing Complete",
+            f"Public: {len(processed_logs)} - SOHO: {len(my_processed_logs)}",
+        )
+
+    if len(my_processed_logs == 0 and len(processed_logs) == 0):
+        mailer.send_mail(
+            "ERROR: BH WebLog Processing",
+            f"NO LOGS PROCESSED! CHECK log, possible error downloading from Bluehost",
+        )
+
 
 
 if __name__ == "__main__":
-    rdbms: bool = database_check()
-    if rdbms:
+    # have_rdbms: tuple[bool,str] = database_check()
+    if database_check():
         parser = argparse.ArgumentParser(description="ADHOC month/year log processing")
         parser.add_argument(
             "-m",
@@ -114,3 +122,7 @@ if __name__ == "__main__":
         args = parser.parse_args()
 
         main(**vars(args))
+
+    else:
+        print(f"Database {have_rdbms} has an issue")
+        logger.error(f"Database {have_rdbms} has an issue")

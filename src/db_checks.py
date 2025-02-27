@@ -42,7 +42,7 @@ def schema():
             create_database(engine.url)
 
     except (exc.SQLAlchemyError, exc.OperationalError) as e:
-        logger.critical(str(e))
+
         return False
 
     return True
